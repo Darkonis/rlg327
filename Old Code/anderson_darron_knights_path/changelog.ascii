@@ -1,0 +1,11 @@
+	Changelog for knights path for a complete documentation please visit https://github.com/Darkonis/cs327 (times are approximate)
+
+   6:00 8/28 integration inital file and test of git
+   7:00 8/28 defined all functions nessassary (not implemented at all)
+   8:00 8/28 functions actually fully defined and partially written
+   8:30 8/28 chessboard.c functions completed but not tested
+   9:00 8/28 added ability read in length and height of chess board
+   9:30 8/28 testable version: known bugs: segmentation fault when running
+   11:30 8/29 segmentation faults fixed Known bugs: I am a dumb person who decided that knights move in a 3 by 1 motion not a 2 by 1
+   11:45 8/29 Working version still needs to be finalised before submition
+   4:30 8/29 finalized version with testing information removed

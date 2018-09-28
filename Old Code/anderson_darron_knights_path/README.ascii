@@ -1,0 +1,5 @@
+Hello and welcome to the knights tour
+Code Written and developed by Darron Anderson
+The code included here to the best of my knowledge meets all specifications of the project and in addition allows the user to choose the size of the chessboard by asking for relevent information before beginning the main program.
+Note this program also assumes that the first position of the knight is square 1 functionallity could be changed by calling the make a move with a diffrent starting position
+Thank you for your time and have a wonderful day!

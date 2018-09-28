@@ -1,0 +1,147 @@
+
+dungeon_maker.c,2149
+# define rand_under(16,351
+# define rand_range(20,494
+# define UNUSED(21,567
+typedef struct corridor_path 23,598
+  heap_node_t *hn;hn24,629
+  uint8_t pos[pos25,648
+  uint8_t from[from26,666
+  int32_t cost;27,685
+} corridor_path_t;28,701
+typedef enum dim 30,721
+  dim_x,31,740
+  dim_y,32,749
+  num_dims33,758
+} dim_t;34,769
+typedef int16_t pair_t[pair_t36,779
+#define DUNGEON_X 38,814
+#define DUNGEON_Y 39,848
+#define MIN_ROOMS 40,882
+#define MAX_ROOMS 41,915
+#define ROOM_MIN_X 42,948
+#define ROOM_MIN_Y 43,981
+#define ROOM_MAX_X 44,1014
+#define ROOM_MAX_Y 45,1048
+#define mappair(47,1082
+#define mapxy(48,1139
+#define hardnesspair(49,1174
+#define hardnessxy(50,1241
+typedef enum __attribute__ ((__packed__)) terrain_type 52,1287
+  ter_debug,53,1344
+  ter_wall,54,1357
+  ter_wall_immutable,55,1369
+  ter_floor,56,1391
+  ter_floor_room,57,1404
+  ter_floor_hall,58,1422
+} terrain_type_t;59,1440
+typedef struct room 61,1459
+  pair_t position;62,1481
+  pair_t size;63,1500
+} room_t;64,1515
+typedef struct dungeon 66,1526
+  uint32_t num_rooms;67,1551
+  uint8_t xPos;68,1573
+  uint8_t yPos;69,1589
+  room_t rooms[rooms70,1605
+  terrain_type_t map[map71,1632
+  uint8_t hardness[hardness80,2285
+} dungeon_t;81,2327
+static uint32_t in_room(83,2341
+static uint32_t adjacent_to_room(99,2732
+static uint32_t is_open_space(107,2993
+static int32_t corridor_path_cmp(112,3092
+static void dijkstra_corridor(116,3242
+static void dijkstra_corridor_inv(215,6979
+#define hardnesspair_inv(268,8301
+static int connect_two_rooms(318,10972
+static int create_cycle(337,11624
+static int connect_rooms(379,13189
+int gaussian[gaussian392,13382
+typedef struct queue_node 400,13538
+  int x,401,13566
+  int x, y;401,13566
+  struct queue_node *next;next402,13578
+} queue_node_t;403,13605
+static int smooth_hardness(405,13622
+static int empty_dungeon(559,17798
+static int place_rooms(577,18173
+static int make_rooms(614,19360
+int gen_dungeon(638,19908
+void render_dungeon(650,20051
+void delete_dungeon(678,20658
+void init_dungeon(682,20697
+void save(686,20753
+void load(774,23127
+int main(913,26568
+
+heap.c,1009
+#undef min4,39
+struct heap_node 6,51
+  heap_node_t *next;next7,70
+  heap_node_t *prev;prev8,91
+  heap_node_t *parent;parent9,112
+  heap_node_t *child;child10,135
+  void *datum;datum11,157
+  uint32_t degree;12,172
+  uint32_t mark;13,191
+#define splice_heap_node_lists(16,212
+#define insert_heap_node_in_list(25,524
+#define remove_heap_node_from_list(32,748
+void print_heap_node(37,881
+void print_heap(53,1203
+void print_heap_node_list(70,1505
+void heap_init(86,1704
+void heap_node_delete(96,1940
+void heap_delete(114,2244
+heap_node_t *heap_insert(heap_insert125,2409
+void *heap_peek_min(heap_peek_min145,2725
+static void heap_link(150,2801
+static void heap_consolidate(164,3123
+void *heap_remove_min(heap_remove_min205,4056
+int heap_combine(240,4590
+static void heap_cut(269,5241
+static void heap_cascading_cut(283,5522
+int heap_decrease_key(297,5748
+int heap_decrease_key_no_replace(311,5990
+int32_t compare(335,6564
+char *print_int(print_int340,6663
+int main(349,6781
+
+heap.h,245
+# define HEAP_H2,15
+typedef struct heap_node heap_node_t;11,114
+typedef struct heap 13,153
+  heap_node_t *min;min14,175
+  uint32_t size;15,195
+  int32_t (*compare)compare16,212
+  void (*datum_delete)datum_delete17,269
+} heap_t;18,301
+
+macros.h,611
+# define MACROS_H2,17
+#  define dprintf(16,213
+#  define dfprintf(17,256
+#  define dprintf(19,320
+#  define dfprintf(20,343
+# define fieldwidth(23,382
+# define exit(37,1201
+# define fopen(42,1441
+#  define malloc(76,3348
+#  define calloc(92,4430
+#  define strdup(107,5435
+#  define free(117,6055
+# define swap(125,6303
+# define memswap(131,6415
+# define structdup(137,6543
+# define datacmp(144,6927
+# define max2(153,7400
+# define min2(160,7576
+# define max 167,7752
+# define min 168,7770
+# define max3(170,7789
+# define min3(171,7830
+# define frand(173,7872
+# define structdup(180,7984
+
+dungeon_maker.h,0
