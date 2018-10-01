@@ -1,0 +1,9 @@
+#ifndef MONSTER_H
+#define MONSTER_H
+#include <stdio.h>
+
+typedef struct monster_t;
+void move();
+
+
+#endif

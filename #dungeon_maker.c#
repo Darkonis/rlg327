@@ -1243,6 +1243,7 @@ void generateCompleteDistances(dungeon_t *d)
 
 
            d->completePath[l][k]=&path[l][k];
+
          }
      }
 
@@ -1254,7 +1255,7 @@ void generatePartialDistances(dungeon_t *d)
    uint32_t initialized = 0;
   heap_t h;
   uint32_t x, y;
-  uint32_t pcX,pcY;
+   uint32_t pcX,pcY;
   pcX=d->pc[0];
   pcY=d->pc[1];
   terrain_type_t t;
@@ -1273,8 +1274,39 @@ void generatePartialDistances(dungeon_t *d)
       path[y][x].cost = INT_MAX;
     }
   }
-
-  path[pcY][pcX].cost = 0;
+  //  printf("%d",path[pcY][pcX].cost);
+    path[pcY][pcX].cost = 0;
+    // int m=0;
+    //int n=0;
+  /*  for(m=0;m<DUNGEON_Y;m++)
+    {
+      for(n=0;n<DUNGEON_X;n++)
+	{
+          if(path[m][n].cost==INT_MAX)
+            {
+	      
+              putchar('0');
+            }
+          else if(path[m][n].cost==0)
+            {
+	      
+              putchar('@');
+            }
+          else
+            {
+              int dist=path[m][n].cost;
+              putchar((char)((dist)%10+48));
+            }
+	}
+      putchar('\n');
+    }
+  */
+  /*
+    ter_floor,
+    ter_floor_room,
+    ter_floor_hall,
+  
+   */
   heap_init(&h, corridor_path_cmp, NULL);
   for (y = 0; y < DUNGEON_Y; y++) {
     for (x = 0; x < DUNGEON_X; x++) {
@@ -1378,7 +1410,10 @@ void generatePartialDistances(dungeon_t *d)
 
   
 	   d->partialPath[l][k]=&path[l][k];
+	   //int dist=d->partialPath[l][k]->cost;  
+	   //putchar((char)((dist)%10+48)); 
 	 }
+       // putchar('\n');
      }
 }
 void generateDistances(dungeon_t *d)
@@ -1544,15 +1579,38 @@ int main(int argc, char *argv[])
   generateDistances(&d);
   int m=0;
   int n=0;
+  /*   for(m=0;m<DUNGEON_Y;m++)
+    {
+      for(n=0;n<DUNGEON_X;n++)
+	{
+          //if(d.partialPath[m][n]==NULL||d.partialPath[m][n]->cost==INT_MAX)                                                                                                
+          if(d.map[m][n]==ter_wall_immutable)
+            {
+              putchar(' ');
+            }
+          else if(d.completePath[m][n]->cost==0)
+            {
+              putchar('@');
+            }
+          else
+            {
+              int dist=d.completePath[m][n]->cost;
+              putchar((char)((dist)%10+48));
+            }
+	}
+            putchar('\n');
+    }
+  */
   for(m=0;m<DUNGEON_Y;m++)
     {
       for(n=0;n<DUNGEON_X;n++)
 	{
-	  if(d.partialPath[m][n]==NULL)
+	 
+	  if(d.map[m][n]==ter_wall_immutable||d.partialPath[m][n]->cost==INT_MAX) 
 	    {
 	      putchar(' ');
 	    }
-	  else if(d.partialPath[m][n]==0)
+	  else if(d.partialPath[m][n]->cost==0)
 	    {
 	      putchar('@');
 	    }
@@ -1562,18 +1620,30 @@ int main(int argc, char *argv[])
 	      putchar((char)((dist)%10+48));
 	    }
 	}
-      putchar('\n');
+            putchar('\n');
+    }
+   for(m=0;m<DUNGEON_Y;m++)
+    {
+      for(n=0;n<DUNGEON_X;n++)
+	{
+          //if(d.partialPath[m][n]==NULL||d.partialPath[m][n]->cost==INT_MAX)                                                                                                                               
+          if(d.map[m][n]==ter_wall_immutable)
+            {
+              putchar(' ');
+            }
+          else if(d.completePath[m][n]->cost==0)
+            {
+              putchar('@');
+            }
+          else
+            {
+              int dist=d.completePath[m][n]->cost;
+              putchar((char)((dist)%10+48));
+            }
+	}
+            putchar('\n');
     }
 
-
-
-
-  delete_dungeon(&d);
-  
-  return 0;
-}
-     putchar('\n');
-    }
 
 
 
