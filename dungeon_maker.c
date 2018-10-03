@@ -8,6 +8,7 @@
 #include <limits.h>
 #include <sys/time.h>
 #include <errno.h>
+#include <unistd.h>
 #include "dungeon.h"
 #include "heap.h"
 /* Very slow seed: 686846853 */
@@ -96,6 +97,9 @@ typedef struct dungeon {
   distance_path_t *completePath[DUNGEON_Y][DUNGEON_X];
   distance_path_t *partialPath[DUNGEON_Y][DUNGEON_X];
   uint32_t num_Monsters;
+  uint32_t cur_turn;
+  uint32_t pc_speed;
+  uint32_t pc_nturn;
   pair_t pc;
   monster_t *mon;
   //  pair_t pc;
@@ -1489,9 +1493,19 @@ void populateDun(int numMon,dungeon_t *d)
 	  y=rand()%21;
 	  x=rand()%80;
 	}
-      init_Monster( &(d->mon[i]),rand()%16,rand()%10*5+20,x,y);
+      init_Monster( &(d->mon[i]),rand()%16,rand()%5*4+5,x,y);
     }
 
+}
+void takeTurn(dungeon_t *d)
+{
+  if(d->map[d->pc[1]+1][d->pc[0]]!=ter_wall)
+    {
+  d->pc[1]++;
+      }
+  d->pc_nturn+=1000/d->pc_speed;
+  generateDistances(d);
+  render_dungeon(d);
 }
 int main(int argc, char *argv[])
 {
@@ -1623,6 +1637,9 @@ int main(int argc, char *argv[])
   d.pc[dim_x] = d.rooms[0].position[dim_x];
   d.pc[dim_y] = d.rooms[0].position[dim_y];
   populateDun(10,&d);
+  d.cur_turn=0;
+  d.pc_speed=20;
+  d.pc_nturn=0;
   //printf("\nplayer is at:%d %d\n",d.pc[0],d.pc[1]);
   render_dungeon(&d);
 
@@ -1721,7 +1738,17 @@ int main(int argc, char *argv[])
             putchar('\n');
     }
   */
-
+  // int b=0;
+  while(d.cur_turn!=1000)
+    {
+      if(d.cur_turn==d.pc_nturn)
+	{
+	  takeTurn(&d);
+	  sleep(1);
+	    }
+	d.cur_turn++;
+      
+    }
 
 
 
