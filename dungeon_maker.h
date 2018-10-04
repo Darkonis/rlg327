@@ -64,6 +64,7 @@ struct dungeon{
 
 
 int roll_call(dungeon_t *d,int y,int x);
+monster_t *roll_call2(dungeon_t *d,int y,int x);
 typedef enum dim {
   dim_x,
   dim_y,

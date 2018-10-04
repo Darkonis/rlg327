@@ -660,6 +660,7 @@ void render_dungeon(dungeon_t *d)
     for ( p[dim_x]=0; p[dim_x] < DUNGEON_X; p[dim_x]++) {
       //printf("\nx:%d y:%d",p[dim,dim_y);
       int i=roll_call(d,p[dim_y],p[dim_x]);
+      // int done=0; 
       // printf("\ni:%d \n",i);
       // if(p[dim_x]==0)
       //	{
@@ -667,7 +668,17 @@ void render_dungeon(dungeon_t *d)
 	  //   continue;
 	  // 
 	  //	}
-      if(i==-1)
+      if(i==16)
+	{
+	  putchar('@');
+	  continue;
+	}
+      monster_t *tmp=roll_call2(d,p[dim_y],p[dim_x]);
+      //if(tmp!=NULL)
+      //{
+      //printf("%d",tmp->isLive);
+      //}
+      if(i==-1||!tmp->isLive)
 	{
 	  switch (mappair(p)) {
 	  case ter_wall:
@@ -700,10 +711,12 @@ void render_dungeon(dungeon_t *d)
 	  else
 	    {
 	      putchar('@');
+	      
 	    }
+	  //done=1;
 	   
+	
 	}
-      
     }
       
     putchar('\n');
@@ -1448,6 +1461,21 @@ int roll_call(dungeon_t *d,int y,int x)
     }
   return -1;
 }
+monster_t *roll_call2(dungeon_t *d,int y,int x)
+{
+  // printf("\nx:%d y:%d\n",x,y);                                                                                                                                                                           
+  int i=0;
+  // printf("\nnum:%d\n",d->num_Monsters);                                                                                                                                                                  
+  for(i=0;i<(d->num_Monsters);i++)
+    {
+      if(d->mon[i].pos[0]==x&&d->mon[i].pos[1]==y)
+        {
+          return &(d->mon[i]);
+        }
+    }
+  return NULL;
+}
+
 
 void populateDun(int numMon,dungeon_t *d)
 {
@@ -1490,6 +1518,12 @@ void play(dungeon_t *d)
   int i;
    while(!d->hasLost)
     {
+       if(d->cur_turn==d->pc_nturn)
+        {
+          take_turn(d);
+          sleep(1);
+        }
+
        for(i=0;i<d->num_Monsters;i++)
 	 {
 	   //printf("\n%d==%d:%d\n",d->mon[i].nextTurn,d->cur_turn,d->mon[i].nextTurn==d->cur_turn);
@@ -1498,13 +1532,20 @@ void play(dungeon_t *d)
 	       move(&(d->mon[i]),d);
 	     }
 	 }
-      if(d->cur_turn==d->pc_nturn)
-        {
-          take_turn(d);
-          sleep(1);
-	}
         d->cur_turn++;
-
+	int t;
+	int won=1;
+	for(t=0;t<d->num_Monsters;t++)
+	  {
+	    if(d->mon[t].isLive)
+	      {
+		won=0;
+	      }
+	  }
+	if(won)
+	  {
+	    return;
+	  }
     }
 
 
@@ -1515,6 +1556,7 @@ int main(int argc, char *argv[])
   time_t seed;
   struct timeval tv;
   uint32_t i;
+  int num_mon=10;
   uint32_t do_load, do_save, do_seed, do_image, do_save_seed, do_save_image;
   uint32_t long_arg;
   char *save_file;
@@ -1594,6 +1636,24 @@ int main(int argc, char *argv[])
 	    }
           }
           break;
+	case'0':
+	case'1':
+	case'2':
+	case'3':
+	case'4':
+        case'5':
+        case'6':
+        case'7':
+	case'8':
+        case'9':
+	  num_mon = atoi(argv[i]+1);
+	  //printf("%d",num_mon);
+	  //num_mon=-num_mon;
+	  break;
+	
+
+	  
+	  break;
         case 'i':
           if ((!long_arg && argv[i][2]) ||
               (long_arg && strcmp(argv[i], "-image"))) {
@@ -1638,7 +1698,7 @@ int main(int argc, char *argv[])
   /* Set a valid position for the PC */
   d.pc[dim_x] = d.rooms[0].position[dim_x];
   d.pc[dim_y] = d.rooms[0].position[dim_y];
-  populateDun(10,&d);
+  populateDun(num_mon,&d);
   d.cur_turn=0;
   d.pc_speed=20;
   d.pc_nturn=0;
@@ -1747,7 +1807,10 @@ int main(int argc, char *argv[])
     {
       printf("game over\n");
     }
-
+  else
+    {
+      printf("A Winner Is You!!!! How!?\n");
+    }
   delete_dungeon(&d);
   
   return 0;

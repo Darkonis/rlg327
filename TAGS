@@ -1,5 +1,5 @@
 
-dungeon_maker.c,2118
+dungeon_maker.c,2163
 #define DUMP_HARDNESS_IMAGES 21,419
 # define rand_under(25,564
 # define rand_range(29,707
@@ -47,27 +47,28 @@ static int place_rooms(584,17809
 static int make_rooms(621,18996
 int gen_dungeon(644,19557
 void render_dungeon(656,19700
-void delete_dungeon(713,20688
-void init_dungeon(719,20761
-int write_dungeon_map(724,20818
-int write_rooms(737,21047
-uint32_t calculate_dungeon_size(757,21466
-int makedirectory(764,21713
-int write_dungeon(799,22349
-int read_dungeon_map(862,23844
-int read_rooms(885,24442
-int calculate_num_rooms(938,26258
-int read_dungeon(946,26498
-int read_pgm(1025,28382
-void usage(1110,30785
-void generateCompleteDistances(1119,30994
-void generatePartialDistances(1256,36562
-void generateDistances(1423,43204
-int roll_call(1432,43454
-void populateDun(1451,43840
-void take_turn(1471,44224
-void play(1485,44452
-int main(1511,44901
+void delete_dungeon(726,20922
+void init_dungeon(732,20995
+int write_dungeon_map(737,21052
+int write_rooms(750,21281
+uint32_t calculate_dungeon_size(770,21700
+int makedirectory(777,21947
+int write_dungeon(812,22583
+int read_dungeon_map(875,24078
+int read_rooms(898,24676
+int calculate_num_rooms(951,26492
+int read_dungeon(959,26732
+int read_pgm(1038,28616
+void usage(1123,31019
+void generateCompleteDistances(1132,31228
+void generatePartialDistances(1269,36796
+void generateDistances(1436,43438
+int roll_call(1445,43688
+monster_t *roll_call2(roll_call21464,44074
+void populateDun(1480,44713
+void take_turn(1500,45097
+void play(1514,45325
+int main(1553,45929
 
 dungeon_maker.h,1200
 #define DUNGEON_MAKER_H 2,24
@@ -106,12 +107,12 @@ struct dungeon{dungeon39,805
   pair_t pc;59,2655
   monster_t *mon;mon60,2668
   uint8_t hasLost;61,2686
-typedef enum dim 67,2957
-  dim_x,68,2976
-  dim_y,69,2985
-  num_dims70,2994
-} dim_t;71,3005
-static uint32_t in_room(73,3015
+typedef enum dim 68,3006
+  dim_x,69,3025
+  dim_y,70,3034
+  num_dims71,3043
+} dim_t;72,3054
+static uint32_t in_room(74,3064
 
 heap.c,1009
 #undef min4,39
@@ -188,13 +189,13 @@ monster.c,232
 #define TELE 13,235
 #define TUNNEL 14,252
 void init_Monster(24,311
-void move(38,577
-void randMove(69,1139
-void dumbMove(84,1468
-void smartMove(109,1833
-void preformMove(138,2520
+void move(39,592
+void randMove(70,1154
+void dumbMove(85,1483
+void smartMove(110,1848
+void preformMove(139,2535
 
-monster.h,462
+monster.h,487
 #define MONSTER_H2,18
 typedef int16_t pair_t[pair_t14,270
 typedef struct monster16,298
@@ -207,11 +208,12 @@ typedef struct monster16,298
   uint8_t speed;24,423
   uint8_t isSeen;25,440
   long long nextTurn;26,505
-} monster_t;27,527
-typedef struct dungeon dungeon_t;28,540
-#define ERRATIC 32,620
-#define SMART 33,640
-#define TELE 34,658
-#define TUNNEL 35,675
+  uint8_t isLive;27,527
+} monster_t;28,545
+typedef struct dungeon dungeon_t;29,558
+#define ERRATIC 33,638
+#define SMART 34,658
+#define TELE 35,676
+#define TUNNEL 36,693
 
 dungeon.h,0

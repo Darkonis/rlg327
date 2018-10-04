@@ -154,9 +154,12 @@ void preformMove(monster_t *m,dungeon_t *d,int tarX,int tarY)
     }
   else if(d->map[tarY][tarX]==ter_floor_room||d->map[tarY][tarX]==ter_floor_hall)
     {
-      if(rolecall(d,tarX,tarY))
+      if(roll_call2(d,tarY,tarX))
 	{
-	  
+	  roll_call2(d,tarY,tarX)->isLive=0;
+	  roll_call2(d,tarY,tarX)->nextTurn=INT_MAX;
+	  monster_t *tmp=roll_call2(d,tarY,tarX);
+	  tmp->isLive=0;
 	}
       m->pos[0]=tarX;
       m->pos[1]=tarY;
@@ -164,6 +167,7 @@ void preformMove(monster_t *m,dungeon_t *d,int tarX,int tarY)
 	{
 	  d->hasLost=1;
 	}
+      
     }
   
   
