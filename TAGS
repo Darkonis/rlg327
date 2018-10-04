@@ -1,119 +1,117 @@
 
-dungeon_maker.c,2758
-#define DUMP_HARDNESS_IMAGES 18,338
-# define rand_under(22,483
-# define rand_range(26,626
-# define UNUSED(27,699
-typedef struct corridor_path 29,730
-  heap_node_t *hn;hn30,761
-  uint8_t pos[pos31,780
-  uint8_t from[from32,798
-  int32_t cost;33,817
-} corridor_path_t;34,833
-typedef enum dim 43,980
-  dim_x,44,999
-  dim_y,45,1008
-  num_dims46,1017
-} dim_t;47,1028
-typedef int16_t pair_t[pair_t49,1038
-#define DUNGEON_X 51,1073
-#define DUNGEON_Y 52,1107
-#define MIN_ROOMS 53,1141
-#define MAX_ROOMS 54,1174
-#define ROOM_MIN_X 55,1207
-#define ROOM_MIN_Y 56,1240
-#define ROOM_MAX_X 57,1273
-#define ROOM_MAX_Y 58,1307
-#define SAVE_DIR 59,1340
-#define DUNGEON_SAVE_FILE 60,1381
-#define DUNGEON_SAVE_SEMANTIC 61,1422
-#define DUNGEON_SAVE_VERSION 62,1468
-#define mappair(64,1503
-#define mapxy(65,1560
-#define hardnesspair(66,1595
-#define hardnessxy(67,1662
-typedef struct dungeon 83,1951
-  uint32_t num_rooms;84,1976
-  room_t *rooms;rooms85,1998
-  terrain_type_t map[map86,2015
- uint8_t hardness[hardness96,2669
-  distance_path_t *completePath[completePath97,2710
-  distance_path_t *partialPath[partialPath98,2765
-  uint32_t num_Monsters;99,2819
-  uint32_t cur_turn;100,2844
-  uint32_t pc_speed;101,2865
-  uint32_t pc_nturn;102,2886
-  pair_t pc;103,2907
-  monster_t *mon;mon104,2920
-} dungeon_t;106,2955
-void init_Monster(108,2969
-static uint32_t in_room(121,3228
-static uint32_t adjacent_to_room(137,3619
-static uint32_t is_open_space(145,3880
-static int32_t corridor_path_cmp(150,3979
-static void dijkstra_corridor(154,4129
-static void dijkstra_corridor_inv(254,7867
-#define hardnesspair_inv(307,9189
-static int connect_two_rooms(357,11860
-static int create_cycle(376,12512
-static int connect_rooms(418,14077
-int gaussian[gaussian431,14270
-typedef struct queue_node 439,14426
-  int x,440,14454
-  int x, y;440,14454
-  struct queue_node *next;next441,14466
-} queue_node_t;442,14493
-static int smooth_hardness(444,14510
-static int empty_dungeon(603,18779
-static int place_rooms(622,19155
-static int make_rooms(659,20342
-int gen_dungeon(682,20903
-void render_dungeon(694,21046
-void delete_dungeon(745,21931
-void init_dungeon(751,22004
-int write_dungeon_map(756,22061
-int write_rooms(769,22290
-uint32_t calculate_dungeon_size(789,22709
-int makedirectory(796,22956
-int write_dungeon(831,23592
-int read_dungeon_map(894,25087
-int read_rooms(917,25685
-int calculate_num_rooms(970,27501
-int read_dungeon(978,27741
-int read_pgm(1057,29625
-void usage(1142,32028
-void generateCompleteDistances(1151,32237
-void generatePartialDistances(1288,37805
-void generateDistances(1455,44441
-int roll_call(1461,44546
-void populateDun(1480,44933
-void takeTurn(1500,45316
-int main(1510,45499
+dungeon_maker.c,2118
+#define DUMP_HARDNESS_IMAGES 21,419
+# define rand_under(25,564
+# define rand_range(29,707
+# define UNUSED(30,780
+typedef struct corridor_path 32,819
+  heap_node_t *hn;hn33,850
+  uint8_t pos[pos34,869
+  uint8_t from[from35,887
+  int32_t cost;36,906
+} corridor_path_t;37,922
+#define DUNGEON_X 49,1107
+#define DUNGEON_Y 50,1141
+#define MIN_ROOMS 51,1175
+#define MAX_ROOMS 52,1208
+#define ROOM_MIN_X 53,1241
+#define ROOM_MIN_Y 54,1274
+#define ROOM_MAX_X 55,1307
+#define ROOM_MAX_Y 56,1341
+#define SAVE_DIR 57,1374
+#define DUNGEON_SAVE_FILE 58,1415
+#define DUNGEON_SAVE_SEMANTIC 59,1456
+#define DUNGEON_SAVE_VERSION 60,1502
+#define mappair(62,1537
+#define mapxy(63,1594
+#define hardnesspair(64,1629
+#define hardnessxy(65,1696
+static uint32_t adjacent_to_room(99,2273
+static uint32_t is_open_space(107,2534
+static int32_t corridor_path_cmp(112,2633
+static void dijkstra_corridor(116,2783
+static void dijkstra_corridor_inv(216,6521
+#define hardnesspair_inv(269,7843
+static int connect_two_rooms(319,10514
+static int create_cycle(338,11166
+static int connect_rooms(380,12731
+int gaussian[gaussian393,12924
+typedef struct queue_node 401,13080
+  int x,402,13108
+  int x, y;402,13108
+  struct queue_node *next;next403,13120
+} queue_node_t;404,13147
+static int smooth_hardness(406,13164
+static int empty_dungeon(565,17433
+static int place_rooms(584,17809
+static int make_rooms(621,18996
+int gen_dungeon(644,19557
+void render_dungeon(656,19700
+void delete_dungeon(713,20688
+void init_dungeon(719,20761
+int write_dungeon_map(724,20818
+int write_rooms(737,21047
+uint32_t calculate_dungeon_size(757,21466
+int makedirectory(764,21713
+int write_dungeon(799,22349
+int read_dungeon_map(862,23844
+int read_rooms(885,24442
+int calculate_num_rooms(938,26258
+int read_dungeon(946,26498
+int read_pgm(1025,28382
+void usage(1110,30785
+void generateCompleteDistances(1119,30994
+void generatePartialDistances(1256,36562
+void generateDistances(1423,43204
+int roll_call(1432,43454
+void populateDun(1451,43840
+void take_turn(1471,44224
+void play(1485,44452
+int main(1511,44901
 
-dungeon_maker.h,649
+dungeon_maker.h,1200
 #define DUNGEON_MAKER_H 2,24
-#define DUNGEON_X 15,293
-#define DUNGEON_Y 16,327
-typedef struct distance_path 17,361
-  heap_node_t *hn;hn18,392
-  uint8_t pos[pos19,411
-  uint8_t from[from20,429
-  int32_t cost;21,448
-} distance_path_t;22,464
-typedef enum __attribute__ ((__packed__)) terrain_type 24,484
-  ter_debug,25,541
-  ter_wall,26,554
-  ter_wall_immutable,27,566
-  ter_floor,28,588
-  ter_floor_room,29,601
-  ter_floor_hall,30,619
-} terrain_type_t;31,637
-typedef int16_t pair_t[pair_t32,655
-typedef struct room 33,682
-  pair_t position;34,704
-  pair_t size;35,723
-} room_t;36,738
-typedef struct dungeon dungeon_t;37,748
+#define DUNGEON_X 15,294
+#define DUNGEON_Y 16,328
+typedef struct distance_path 18,391
+  heap_node_t *hn;hn19,422
+  uint8_t pos[pos20,441
+  uint8_t from[from21,459
+  int32_t cost;22,478
+} distance_path_t;23,494
+typedef enum __attribute__ ((__packed__)) terrain_type 25,514
+  ter_debug,26,571
+  ter_wall,27,584
+  ter_wall_immutable,28,596
+  ter_floor,29,618
+  ter_floor_room,30,631
+  ter_floor_hall,31,649
+} terrain_type_t;32,667
+typedef int16_t pair_t[pair_t33,685
+typedef struct room 34,712
+  pair_t position;35,734
+  pair_t size;36,753
+} room_t;37,768
+struct dungeon{dungeon39,805
+  uint32_t num_rooms;40,821
+  room_t *rooms;rooms41,843
+  terrain_type_t map[map42,860
+ uint8_t hardness[hardness52,2417
+  distance_path_t *completePath[completePath53,2458
+  distance_path_t *partialPath[partialPath54,2513
+  uint32_t num_Monsters;55,2567
+  uint32_t cur_turn;56,2592
+  uint32_t pc_speed;57,2613
+  uint32_t pc_nturn;58,2634
+  pair_t pc;59,2655
+  monster_t *mon;mon60,2668
+  uint8_t hasLost;61,2686
+typedef enum dim 67,2957
+  dim_x,68,2976
+  dim_y,69,2985
+  num_dims70,2994
+} dim_t;71,3005
+static uint32_t in_room(73,3015
 
 heap.c,1009
 #undef min4,39
@@ -184,33 +182,36 @@ macros.h,611
 # define frand(173,7872
 # define structdup(180,7984
 
-monster.c,229
-#define ERRATIC 8,102
-#define SMART 9,122
-#define TELE 10,140
-#define TUNNEL 11,157
-void init_Monster(19,206
-void move(31,440
-void randMove(60,945
-void dumbMove(76,1277
-void smartMove(101,1642
-void preformMove(116,1988
+monster.c,232
+#define ERRATIC 11,197
+#define SMART 12,217
+#define TELE 13,235
+#define TUNNEL 14,252
+void init_Monster(24,311
+void move(38,577
+void randMove(69,1139
+void dumbMove(84,1468
+void smartMove(109,1833
+void preformMove(138,2520
 
-monster.h,354
+monster.h,462
 #define MONSTER_H2,18
-#define ERRATIC 15,286
-#define SMART 16,306
-#define TELE 17,324
-#define TUNNEL 18,341
-typedef struct monster20,361
-  uint8_t val;22,386
-  pair_t pos;23,401
-  uint8_t isErr;24,415
-  uint8_t isSmart;25,432
-  uint8_t isTele;26,451
-  uint8_t isTun;27,469
-  uint8_t speed;28,486
-  uint8_t isSeen;29,503
-} monster_t;31,582
+typedef int16_t pair_t[pair_t14,270
+typedef struct monster16,298
+  uint8_t val;18,323
+  pair_t pos;19,338
+  uint8_t isErr;20,352
+  uint8_t isSmart;21,369
+  uint8_t isTele;22,388
+  uint8_t isTun;23,406
+  uint8_t speed;24,423
+  uint8_t isSeen;25,440
+  long long nextTurn;26,505
+} monster_t;27,527
+typedef struct dungeon dungeon_t;28,540
+#define ERRATIC 32,620
+#define SMART 33,640
+#define TELE 34,658
+#define TUNNEL 35,675
 
 dungeon.h,0

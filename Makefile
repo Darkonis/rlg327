@@ -7,8 +7,8 @@ CFLAGS = -Wall -Werror -ggdb -funroll-loops -pg
 CXXFLAGS = -Wall -Werror -ggdb -funroll-loops                                           
 LDFLAGS = 
 
-BIN = dungeon_maker
-OBJS = dungeon_maker.o heap.o
+BIN = dungeon_maker 
+OBJS = dungeon_maker.o heap.o monster.o
 
 all: $(BIN) etags
 

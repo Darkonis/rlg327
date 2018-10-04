@@ -1,3 +1,5 @@
+//#ifndef DUNGEON_MAKER_C
+//#define DUNGEON_MAKER_C
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -9,8 +11,9 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <unistd.h>
-#include "dungeon.h"
+#include "dungeon_maker.h"
 #include "heap.h"
+//#include "monster.c"
 /* Very slow seed: 686846853 */
 
 //#include "heap.h"
@@ -25,7 +28,7 @@
 /* Returns random integer in [min, max]. */
 # define rand_range(min, max) ((rand() % (((max) + 1) - (min))) + (min))
 # define UNUSED(f) ((void) f)
-
+//#endif
 typedef struct corridor_path {
   heap_node_t *hn;
   uint8_t pos[2];
@@ -40,13 +43,8 @@ typedef struct corridor_path {
 } distance_path_t;
 */
 
-typedef enum dim {
-  dim_x,
-  dim_y,
-  num_dims
-} dim_t;
 
-typedef int16_t pair_t[num_dims];
+//typedef int16_t pair_t[num_dims];
 
 #define DUNGEON_X              80
 #define DUNGEON_Y              21
@@ -80,32 +78,11 @@ typedef struct room {
   pair_t size;
 } room_t;
 */
-typedef struct dungeon {
-  uint32_t num_rooms;
-  room_t *rooms;
-  terrain_type_t map[DUNGEON_Y][DUNGEON_X];
 
-  /* Since hardness is usually not used, it would be expensive to pull it *
-   * into cache every time we need a map cell, so we store it in a        *
-   * parallel array, rather than using a structure to represent the       *
-   * cells.  We may want a cell structure later, but from a performanace  *
-   * perspective, it would be a bad idea to ever have the map be part of  *
-   * that structure.  Pathfinding will require efficient use of the map,  *
-   * and pulling in unnecessary data with each map cell would add a lot   *
-   * of overhead to the memory system.                                    */
- uint8_t hardness[DUNGEON_Y][DUNGEON_X];
-  distance_path_t *completePath[DUNGEON_Y][DUNGEON_X];
-  distance_path_t *partialPath[DUNGEON_Y][DUNGEON_X];
-  uint32_t num_Monsters;
-  uint32_t cur_turn;
-  uint32_t pc_speed;
-  uint32_t pc_nturn;
-  pair_t pc;
-  monster_t *mon;
-  //  pair_t pc;
-} dungeon_t;
 
-void init_Monster(monster_t *m,int val,int speed,int posX,int posY)
+ 
+   
+/*void init_monster(monster_t *m,int val,int speed,int posX,int posY)
 {
   m->val=val;
   //printf("%d",m->val);
@@ -116,24 +93,9 @@ void init_Monster(monster_t *m,int val,int speed,int posX,int posY)
   m->isTele=TELE&val;
   m->isTun=TUNNEL&val;
   m->speed=speed;
+  m->nextTurn=0;
 }
-
-static uint32_t in_room(dungeon_t *d, int16_t y, int16_t x)
-{
-  int i;
-
-  for (i = 0; i < d->num_rooms; i++) {
-    if ((x >= d->rooms[i].position[dim_x]) &&
-        (x < (d->rooms[i].position[dim_x] + d->rooms[i].size[dim_x])) &&
-        (y >= d->rooms[i].position[dim_y]) &&
-        (y < (d->rooms[i].position[dim_y] + d->rooms[i].size[dim_y]))) {
-      return 1;
-    }
-  }
-
-  return 0;
-}
-
+*/
 static uint32_t adjacent_to_room(dungeon_t *d, int16_t y, int16_t x)
 {
   return (mapxy(x - 1, y) == ter_floor_room ||
@@ -695,11 +657,17 @@ void render_dungeon(dungeon_t *d)
 {
   pair_t p;
   for (p[dim_y]=0; p[dim_y] < DUNGEON_Y; p[dim_y]++) {
-    for ( p[dim_x]=1; p[dim_x] < DUNGEON_X; p[dim_x]++) {
+    for ( p[dim_x]=0; p[dim_x] < DUNGEON_X; p[dim_x]++) {
       //printf("\nx:%d y:%d",p[dim,dim_y);
       int i=roll_call(d,p[dim_y],p[dim_x]);
       // printf("\ni:%d \n",i);
-      if(i==0)
+      // if(p[dim_x]==0)
+      //	{
+	  //  printf("%d",p[dim_y]%10);
+	  //   continue;
+	  // 
+	  //	}
+      if(i==-1)
 	{
 	  switch (mappair(p)) {
 	  case ter_wall:
@@ -723,11 +691,11 @@ void render_dungeon(dungeon_t *d)
 	{
 	  if(i<10)
 	    {
-	       putchar((char)i+47);
+	       putchar((char)i+48);
 	    }
-	  else if(i<17)
+	  else if(i<16)
 	    {
-	      putchar((char)i+54);
+	      putchar((char)i+55);
 	    }
 	  else
 	    {
@@ -1383,7 +1351,7 @@ void generatePartialDistances(dungeon_t *d)
         path[p->pos[dim_y]+yMod    ][p->pos[dim_x]+xMod ].from[dim_x] = p->pos[dim_x];
         heap_decrease_key_no_replace(&h, path[p->pos[dim_y]+yMod ][p->pos[dim_x]+xMod ].hn);
       }
- xMod=-1;
+    xMod=-1;
     yMod=0;
     if((path[p->pos[dim_y]+yMod][p->pos[dim_x]+xMod].hn)&&(path[p->pos[dim_y]+yMod][p->pos[dim_x]+xMod].cost>p->cost+hardnesspair(p->pos)/85+1))
       {
@@ -1420,7 +1388,7 @@ void generatePartialDistances(dungeon_t *d)
         path[p->pos[dim_y]+yMod    ][p->pos[dim_x]+xMod ].from[dim_x] = p->pos[dim_x];
         heap_decrease_key_no_replace(&h, path[p->pos[dim_y]+yMod ][p->pos[dim_x]+xMod ].hn);
       }
- xMod=1;
+    xMod=1;
     yMod=1;
     if((path[p->pos[dim_y]+yMod][p->pos[dim_x]+xMod].hn)&&(path[p->pos[dim_y]+yMod][p->pos[dim_x]+xMod].cost>p->cost+hardnesspair(p->pos)/85+1))
       {
@@ -1457,7 +1425,10 @@ void generateDistances(dungeon_t *d)
   generatePartialDistances(d);
   generateCompleteDistances(d);
 }
-
+/*static int32_t monster_cmp(const void *key, const void *with) {
+  return ((monster_t *) key)->next_turn - ((monster_t *) with)->next_turn;
+}
+*/
 int roll_call(dungeon_t *d,int y,int x)
 {
   // printf("\nx:%d y:%d\n",x,y);
@@ -1467,16 +1438,17 @@ int roll_call(dungeon_t *d,int y,int x)
     {
       if(d->mon[i].pos[0]==x&&d->mon[i].pos[1]==y)
 	{
-	  return d->mon[i].val+1;
+	  return d->mon[i].val;
 	}
     }
   if(d->pc[0]==x&&d->pc[1]==y)
     {
       // printf("\npos %d %d\n",d->pc[0],d->pc[1]);
-      return 17;
+      return 16;
     }
-  return 0;
+  return -1;
 }
+
 void populateDun(int numMon,dungeon_t *d)
 {
   int i=0;
@@ -1493,19 +1465,49 @@ void populateDun(int numMon,dungeon_t *d)
 	  y=rand()%21;
 	  x=rand()%80;
 	}
-      init_Monster( &(d->mon[i]),rand()%16,rand()%5*4+5,x,y);
+      init_Monster( &(d->mon[i]),rand()%16,rand()%4*5+20,x,y);
     }
 
 }
-void takeTurn(dungeon_t *d)
+void take_turn(dungeon_t *d)
 {
   if(d->map[d->pc[1]+1][d->pc[0]]!=ter_wall)
     {
-  d->pc[1]++;
+      d->pc[1]++;
       }
-  d->pc_nturn+=1000/d->pc_speed;
+  else
+    {
+       d->pc[1]--;
+    }
+  d->pc_nturn+=1000/(d->pc_speed);
   generateDistances(d);
   render_dungeon(d);
+}
+void play(dungeon_t *d)
+{
+  // monster_t *m;
+  // heap_t h;
+  int i;
+   while(!d->hasLost)
+    {
+       for(i=0;i<d->num_Monsters;i++)
+	 {
+	   //printf("\n%d==%d:%d\n",d->mon[i].nextTurn,d->cur_turn,d->mon[i].nextTurn==d->cur_turn);
+	   if(d->mon[i].nextTurn==d->cur_turn)
+	     {
+	       move(&(d->mon[i]),d);
+	     }
+	 }
+      if(d->cur_turn==d->pc_nturn)
+        {
+          take_turn(d);
+          sleep(1);
+	}
+        d->cur_turn++;
+
+    }
+
+
 }
 int main(int argc, char *argv[])
 {
@@ -1669,7 +1671,7 @@ int main(int argc, char *argv[])
   // populateDun(10,&d);
 
   generateDistances(&d);
-
+  printf("%d",  in_room(&d,1,1));//basicly just call to call
 
   //int m=0;
   //int n=0;
@@ -1739,18 +1741,12 @@ int main(int argc, char *argv[])
     }
   */
   // int b=0;
-  while(d.cur_turn!=1000)
+  d.hasLost=0;
+  play(&d);
+  if(d.hasLost)
     {
-      if(d.cur_turn==d.pc_nturn)
-	{
-	  takeTurn(&d);
-	  sleep(1);
-	    }
-	d.cur_turn++;
-      
+      printf("game over\n");
     }
-
-
 
   delete_dungeon(&d);
   
