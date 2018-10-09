@@ -156,9 +156,14 @@ void preformMove(monster_t *m,dungeon_t *d,int tarX,int tarY)
     {
       if(roll_call2(d,tarY,tarX))
 	{
+	  monster_t *tmp=roll_call2(d,tarY,tarX);
+	  if(tmp==m)
+	    {
+	      return;
+	    }
 	  roll_call2(d,tarY,tarX)->isLive=0;
 	  roll_call2(d,tarY,tarX)->nextTurn=INT_MAX;
-	  monster_t *tmp=roll_call2(d,tarY,tarX);
+	  // monster_t *tmp=roll_call2(d,tarY,tarX);
 	  tmp->isLive=0;
 	}
       m->pos[0]=tarX;

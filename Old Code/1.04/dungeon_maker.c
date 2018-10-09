@@ -1493,7 +1493,7 @@ void populateDun(int numMon,dungeon_t *d)
 	  y=rand()%21;
 	  x=rand()%80;
 	}
-      init_Monster( &(d->mon[i]),rand()%16,rand()%4*5+20,x,y);
+      init_Monster( &(d->mon[i]),rand()%16,rand()%4*5+10,x,y);
     }
 
 }

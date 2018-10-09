@@ -21,3 +21,9 @@
 	
 	10/1/18
 	git functionality restored
+	10/2/18
+	added monster generation and movement pathing
+	player move added
+	10/3/18
+	added movement and player death
+	added num monster switch and player win

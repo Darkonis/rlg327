@@ -1,15 +1,14 @@
-CC = gcc
+\1;5202;0cCC = gcc
 CXX = g++
 ECHO = echo
 RM = rm -f
 
-CFLAGS = -Wall -Werror -ggdb3 -funroll-loops
-CXXFLAGS = -Wall -Werror -ggdb3 -funroll-loops                                           
+CFLAGS = -Wall -Werror -ggdb -funroll-loops -pg
+CXXFLAGS = -Wall -Werror -ggdb -funroll-loops                                           
 LDFLAGS = 
 
-BIN = rlg327
-OBJS = rlg327.o heap.o dungeon.o path.o utils.o pc.o \
-       npc.o move.o event.o character.o
+BIN = dungeon_maker 
+OBJS = dungeon_maker.o heap.o monster.o
 
 all: $(BIN) etags
 
