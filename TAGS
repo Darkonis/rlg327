@@ -349,8 +349,8 @@ const char *tombstone tombstone45,1780
  void to_init_terminal(65,2830
 void usage(73,2964
 void render_menu(83,3217
-char process_input(141,4380
-int main(184,5065
+char process_input(140,4350
+int main(206,5314
 
 utils.c,25
 int makedirectory(9,124

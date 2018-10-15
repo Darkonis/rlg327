@@ -95,7 +95,6 @@ void render_menu(dungeon_t *d,int curMenu)
 	   
 	   if(d->character[y][x]!=NULL&&d->character[y][x]->alive)//if there is a monster at this location
 	     {
-	       // mvaddch(0,0,x+48);
 	       if(m_count>=21*curMenu&&m_count<21*(curMenu+1))
 		 {
 		   int xdif=d->pc.position[0]-x;
@@ -169,13 +168,36 @@ char process_input(dungeon_t *d)
 	      in=getch();
 	    }
 	}
-      else
+      
+      switch(in)
 	{
-	   mvprintw(22,0,"input is:%c ", in);
+	case 48:
+	case 49:
+	case 50:
+	case 51:
+	case 52:
+	case 53:
+	case 54:
+	case 55:
+	case 56:
+	case 57:
+	case 121://y
+	case 107 ://k
+	case 117://u
+	case 108://l
+	case 110://n
+	case 106://j
+	case 98://b
+	case 104://h
+	case 60://<
+	case 62 ://>
+	case (char )' ':
+	  mvprintw(22,0,"input is:%c ", in);
 	  char l = (char) in;
 	  do_moves(d,&l);
-	   mvprintw(22,0,"input is:%c ", in);
+	   mvprintw(2,0,"input is:%c ", in);
 	   refresh();
+	   break;
 	}
     
       return in;
