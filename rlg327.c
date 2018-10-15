@@ -2,7 +2,7 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-
+#include <ncurses.h>
 /* Very slow seed: 686846853 */
 
 #include "dungeon.h"
@@ -62,7 +62,14 @@ const char *tombstone =
   "            |......\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"......"
   "..\"\"\"\"\"....\"\"\"\"\"..\"\"...\"\"\".\n\n"
   "            You're dead.  Better luck in the next life.\n\n\n";
-
+ void to_init_terminal(void)
+    {
+      initscr();
+      raw();
+      noecho();
+      curs_set(0);
+      keypad(stdscr, TRUE);
+    }
 void usage(char *name)
 {
   fprintf(stderr,
@@ -73,7 +80,107 @@ void usage(char *name)
 
   exit(-1);
 }
+void render_menu(dungeon_t *d,int curMenu)
+{
+  // erase();//clean the screen from input
+  // refresh();
+  int lineNum=1;
+  int m_count=0;
+  int x;
+  int y;
+  for(y=0;y<DUNGEON_Y;y++)
+    {
+       for (x = 0; x < DUNGEON_X; x++)
+	 {
+	   
+	   if(d->character[y][x]!=NULL&&d->character[y][x]->alive)//if there is a monster at this location
+	     {
+	       // mvaddch(0,0,x+48);
+	       if(m_count>=21*curMenu&&m_count<21*(curMenu+1))
+		 {
+		   int xdif=d->pc.position[0]-x;
+		   int ydif= d->pc.position[1]-y;
+		   if(!xdif&&!ydif)
+		     {
+		       continue;
+		     }
+		   mvprintw(lineNum,0,"Monster num:%d, Monster symbol %c is ",m_count,d->character[y][x]->symbol);
+		   if(xdif>0)
+		     {
+		       printw("%d spaces west ",xdif);//35
+		     }
+		   else if(xdif<0)
+		     {
+		       printw("%d spaces east ",-xdif);
+		     }
+		   if(xdif&&ydif)
+		     {
+		       printw("and ");
+		     }
+		   if(ydif<0)
+		     {
+		       printw("%d spaces south",-ydif);
+		     }
+		   else if(ydif>0)
+		     {
+		       printw("%d spaces north",ydif);
+		     }
+		   lineNum++;
+		   m_count++;
+		 }
+	       else
+		 {
+		   m_count++;
+		 }
+	     }
+	 }
+       
+    }
+  refresh();
+}
+char process_input(dungeon_t *d)
+{
+  
+  render_dungeon(d);
+  
+  int in = 60;
+  if(in=='Q')
+    {
+      return in;
+    }
+      in = getch();
+      if(in=='m')
+	{
+	  clear();
+	  int curMenu=0;
+	  while(in!=27&&in!='Q')
+	    {
+	      if(in == KEY_UP&&curMenu!=d->num_monsters/21)
+		{
+		  curMenu++;
+		}
+	      else if(in==KEY_DOWN&&curMenu!=0)
+		{
+		  curMenu--;
+		}
+	      erase();
+	      mvprintw(22,0,"input is:%d and curMenu is %d", in,curMenu);
+	       render_menu(d,curMenu);
+	      in=getch();
+	    }
+	}
+      else
+	{
+	   mvprintw(22,0,"input is:%c ", in);
+	  char l = (char) in;
+	  do_moves(d,&l);
+	   mvprintw(22,0,"input is:%c ", in);
+	   refresh();
+	}
+    
+      return in;
 
+}
 int main(int argc, char *argv[])
 {
   dungeon_t d;
@@ -85,7 +192,7 @@ int main(int argc, char *argv[])
   char *save_file;
   char *load_file;
   char *pgm_file;
-
+  to_init_terminal();
   /* Quiet a false positive from valgrind. */
   memset(&d, 0, sizeof (d));
   
@@ -210,20 +317,46 @@ int main(int argc, char *argv[])
     read_pgm(&d, pgm_file);
   } else {
     gen_dungeon(&d);
+    int t=0;
+    while(t==0)
+      {
+	int i = rand()%21;
+	int k=rand()%80;
+	if(d.map[i][k]==ter_floor_room)
+	  {
+	    t=1;
+	    d.map[i][k]=ter_stair_up;
+ 	  }
+      }
+    t=0;
+    while(t==0)
+      {
+        int i = rand()%21;
+	int k=rand()%80;
+        if(d.map[i][k]==ter_floor_room)
+          {
+            t= 1;
+            d.map[i][k]=ter_stair_down;
+          }
+      }
+
+    
   }
 
   /* Ignoring PC position in saved dungeons.  Not a bug. */
   config_pc(&d);
   gen_monsters(&d);
-
+  
+  // int isMenu=0;
+  // int curMenu=0;
   while (pc_is_alive(&d) && dungeon_has_npcs(&d)) {
-    render_dungeon(&d);
-    do_moves(&d);
-    usleep(33000);
+    
+   char t= process_input(&d);
+   if (t=='Q')
+     {
+       break;
+     }
   }
-
-  render_dungeon(&d);
-
   if (do_save) {
     if (do_save_seed) {
        /* 10 bytes for number, please dot, extention and null terminator. */
@@ -247,6 +380,10 @@ int main(int argc, char *argv[])
       free(save_file);
     }
   }
+  if(endwin()!=0)
+    {
+      printf("error deinitilizing ncurses");
+    }
 
   printf("%s", pc_is_alive(&d) ? victory : tombstone);
   printf("You defended your life in the face of %u deadly beasts.\n"
@@ -255,8 +392,13 @@ int main(int argc, char *argv[])
          d.pc.kills[kill_direct], d.pc.kills[kill_avenged]);
 
   pc_delete(d.pc.pc);
-
+  /*  if(endwin()!=0)
+    {
+      printf("error deinitilizing ncurses");
+    }
+  */
   delete_dungeon(&d);
-
+  //  _nc_free_and_exit();
+  //ExitProgram();
   return 0;
 }

@@ -13,7 +13,7 @@
 #include "utils.h"
 #include "path.h"
 #include "event.h"
-
+#include <ncurses.h>
 void do_combat(dungeon_t *d, character_t *atk, character_t *def)
 {
   if (def->alive) {
@@ -43,7 +43,7 @@ void move_character(dungeon_t *d, character_t *c, pair_t next)
   }
 }
 
-void do_moves(dungeon_t *d)
+void do_moves(dungeon_t *d,char *in)
 {
   pair_t next;
   character_t *c;
@@ -96,19 +96,158 @@ void do_moves(dungeon_t *d)
   }
 
   if (pc_is_alive(d) && e->c == &d->pc) {
-    c = e->c;
-    d->time = e->time;
-    /* Kind of kludgey, but because the PC is never in the queue when   *
-     * we are outside of this function, the PC event has to get deleted *
-     * and recreated every time we leave and re-enter this function.    */
-    e->c = NULL;
-    event_delete(e);
-    pc_next_pos(d, next);
-    next[dim_x] += c->position[dim_x];
-    next[dim_y] += c->position[dim_y];
+    char t=*in;
+    // mvprintw(22,0,"input at point 1 is:%d ", (int)*in);
+    // refresh();
+    // getch();
+
+    int xVar=2;
+    int yVar=2;
+      if(t=='7'||t=='y')
+	{
+	  yVar=-1;
+	  xVar=-1;
+	}
+      if(t=='8'||t=='k')//why aren't we using wasd controls
+        {
+	  yVar=-1;
+          xVar=0;
+        }
+      if(t=='9'||t=='u')
+        {
+	  yVar=-1;
+          xVar=1;
+        }
+      if(t=='6'||t=='l')
+	{
+	  yVar=0;
+          xVar=1;
+        }
+      if(t=='3'||t=='n')
+        {
+	  yVar=1;
+          xVar=1;
+        }
+      if(t=='2'||t=='j')
+        {
+	  yVar=1;
+          xVar=0;
+        }
+      if(t=='1'||t=='b')
+        {
+	  yVar=1;
+          xVar=-1;
+        }
+      if(t=='4'||t=='h')
+        {
+	  yVar=0;
+          xVar=-1;
+        }
+      if(t=='5'||t==' ')
+        {
+	  yVar=0;
+          xVar=0;
+        }
+      
+      /*    if(xVar==2)
+	{
+	  free(e);
+	  return;//TODO possible error point how should it handle invalid command
+	  }*/
+     
+      if((int)*in==62&&d->map[d->pc.position[1]][d->pc.position[0]]==ter_stair_down)
+	{
+	  delete_dungeon(d);
+	  free(e);
+	  pc_delete(d->pc.pc);
+	  init_dungeon(d);
+	  gen_dungeon(d);
+	  config_pc(d);
+          gen_monsters(d);
+	   while(t==0)
+      {
+        int i = rand()%21;
+        int k=rand()%80;
+        if(d->map[i][k]==ter_floor_room)
+          {
+            t=1;
+            d->map[i][k]=ter_stair_up;
+          }
+      }
+    t=0;
+    while(t==0)
+      {
+        int i = rand()%21;
+        int k=rand()%80;
+        if(d->map[i][k]==ter_floor_room)
+          {
+            t= 1;
+            d->map[i][k]=ter_stair_down;
+          }
+      }
+
+	  render_dungeon(d);
+	  
+	  return;
+	}
+      
+      
+      if((int)*in==60&&d->map[d->pc.position[1]][d->pc.position[0]]==ter_stair_up)//down
+	{
+	  // mvprintw(22,0,"input is:%d ", (int)*in);
+	  // refresh();
+	  // getch();
+	  
+	  free(e);
+	  delete_dungeon(d);
+	  init_dungeon(d);
+	  gen_dungeon(d);
+	  config_pc(d);
+	  gen_monsters(d);
+	   while(t==0)
+      {
+        int i = rand()%21;
+        int k=rand()%80;
+        if(d->map[i][k]==ter_floor_room)
+          {
+            t=1;
+            d->map[i][k]=ter_stair_up;
+          }
+      }
+    t=0;
+    while(t==0)
+      {
+        int i = rand()%21;
+        int k=rand()%80;
+        if(d->map[i][k]==ter_floor_room)
+          {
+            t= 1;
+            d->map[i][k]=ter_stair_down;
+          }
+      }
+
+	  render_dungeon(d);
+	  
+	  return;
+	}
+      c = e->c;
+      d->time = e->time;
+      /* Kind of kludgey, but because the PC is never in the queue when   *
+       * we are outside of this function, the PC event has to get deleted *
+       * and recreated every time we leave and re-enter this function.    */
+      e->c = NULL;
+      event_delete(e);
+      // pc_next_pos(d, next);
+      next[dim_x] = c->position[dim_x]+xVar;
+    next[dim_y] = c->position[dim_y]+yVar;
     if (mappair(next) <= ter_floor) {
-      mappair(next) = ter_floor_hall;
-    }
+      return;
+      // mappair(next) = ter_floor_hall;
+      }
+    if(xVar==2)
+      {
+	return;
+      }
     move_character(d, c, next);
 
     dijkstra(d);
