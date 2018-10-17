@@ -406,7 +406,7 @@ int main(int argc, char *argv[])
     {
       printf("error deinitilizing ncurses");
     }
-  clear();
+  clear();Q
   printf("%s", pc_is_alive(&d) ? victory : tombstone);
   printf("You defended your life in the face of %u deadly beasts.\n"
          "You avenged the cruel and untimely murders of %u "
