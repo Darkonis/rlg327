@@ -154,11 +154,11 @@ char process_input(dungeon_t *d)
 	  int curMenu=0;
 	  while(in!=27&&in!='Q')
 	    {
-	      if(in == KEY_UP&&curMenu!=d->num_monsters/21)
+	      if(in == KEY_DOWN&&curMenu!=d->num_monsters/21)
 		{
 		  curMenu++;
 		}
-	      else if(in==KEY_DOWN&&curMenu!=0)
+	      else if(in==KEY_UP&&curMenu!=0)
 		{
 		  curMenu--;
 		}

@@ -154,11 +154,11 @@ char process_input(dungeon_t *d)
 	  int curMenu=0;
 	  while(in!=27&&in!='Q')
 	    {
-	      if(in == KEY_UP&&curMenu!=d->num_monsters/21)
+	      if(in == KEY_DOWN&&curMenu!=d->num_monsters/21)
 		{
 		  curMenu++;
 		}
-	      else if(in==KEY_DOWN&&curMenu!=0)
+	      else if(in==KEY_UP&&curMenu!=0)
 		{
 		  curMenu--;
 		}
@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
    * interesting test dungeons for you.                             */
  
  if (argc > 1) {
-    for (i = 1, long_arg = 0; i < argc; i++, long_arg = 0) {
+   for (i = 1, long_arg = 0; i <static_cast<unsigned>(argc); i++, long_arg = 0) {
       if (argv[i][0] == '-') { /* All switches start with a dash */
         if (argv[i][1] == '-') {
           argv[i]++;    /* Make the argument have a single dash so we can */
@@ -248,9 +248,9 @@ int main(int argc, char *argv[])
         }
         switch (argv[i][1]) {
         case 'n':
-          if ((!long_arg && argv[i][2]) ||
+          if ((!long_arg && static_cast<unsigned>(argv[i][2])) ||
               (long_arg && strcmp(argv[i], "-nummon")) ||
-              argc < ++i + 1 /* No more arguments */ ||
+              static_cast<unsigned>(argc) < ++i + 1 /* No more arguments */ ||
               !sscanf(argv[i], "%hu", &d.max_monsters)) {
             usage(argv[0]);
           }
@@ -406,7 +406,7 @@ int main(int argc, char *argv[])
     {
       printf("error deinitilizing ncurses");
     }
-  clear();Q
+  clear();
   printf("%s", pc_is_alive(&d) ? victory : tombstone);
   printf("You defended your life in the face of %u deadly beasts.\n"
          "You avenged the cruel and untimely murders of %u "

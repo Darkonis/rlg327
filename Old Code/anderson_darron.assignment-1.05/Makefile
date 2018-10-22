@@ -1,4 +1,4 @@
-xCC = gcc
+CC = gcc
 CXX = g++
 ECHO = echo
 RM = rm -f
@@ -15,7 +15,7 @@ all: $(BIN) etags
 
 $(BIN): $(OBJS)
 	@$(ECHO) Linking $@
-	@$(CXX) $^ -o $@ $(LDFLAGS)
+	@$(CC) $^ -o $@ $(LDFLAGS)
 
 -include $(OBJS:.o=.d)
 
