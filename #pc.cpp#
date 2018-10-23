@@ -169,7 +169,7 @@ void see(dungeon_t *d)
   int y=d->pc.position[1];
   int xMin=x-2;
   int xMax=x+3;
-  int yMin=y-2;
+  int yMin=y-2Q;
   int yMax=y+3;
   int i=yMin;
   int k=xMin;

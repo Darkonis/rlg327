@@ -16,5 +16,5 @@ void config_pc(dungeon_t *d);
 uint32_t pc_next_pos(dungeon_t *d, pair_t dir);
 void place_pc(dungeon_t *d);
 uint32_t pc_in_room(dungeon_t *d, uint32_t room);
-
+void see(dungeon_t *d);
 #endif

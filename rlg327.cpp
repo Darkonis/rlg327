@@ -6,10 +6,10 @@
 /* Very slow seed: 686846853 */
 
 #include "dungeon.h"
-
 #include "pc.h"
 #include "npc.h"
 #include "move.h"
+
 
 const char *victory =
   "\n                                       o\n"
@@ -139,14 +139,10 @@ void render_menu(dungeon_t *d,int curMenu)
 }
 char process_input(dungeon_t *d)
 {
+  see(d);
+  render_seen(d);
   
-  render_dungeon(d);
-  
-  int in = 60;
-  if(in=='Q')
-    {
-      return in;
-    }
+  int in;
       in = getch();
       if(in=='m')
 	{
@@ -162,7 +158,7 @@ char process_input(dungeon_t *d)
 		{
 		  curMenu--;
 		}
-	      erase();
+	      //erase();
 	      mvprintw(22,0,"input is:%d and curMenu is %d", in,curMenu);
 	       render_menu(d,curMenu);
 	      in=getch();
@@ -199,7 +195,8 @@ char process_input(dungeon_t *d)
 	   refresh();
 	   break;
 	}
-    
+      see(d);
+      render_seen(d);
       return in;
 
 }

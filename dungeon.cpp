@@ -10,7 +10,7 @@
 #include "utils.h"
 #include "heap.h"
 #include "event.h"
-
+#include "pc.h"
 #define DUMP_HARDNESS_IMAGES 0
 
 typedef struct corridor_path {
@@ -574,15 +574,28 @@ int gen_dungeon(dungeon_t *d)
     make_rooms(d);
   } while (place_rooms(d));
   connect_rooms(d);
-
+  int i=0;
+  int k=0;
+  for(i=0;i<DUNGEON_Y;i++)
+    {
+      for(k=0;k<DUNGEON_X;k++)
+	{
+	  if(d->map[i][k]!=ter_wall_immutable)
+	    {
+	      d->seen_map[i][k]=ter_wall;
+	    }
+	  else
+	    {
+	      d->seen_map[i][k]=ter_wall_immutable;
+	    }
+	}
+    }
   return 0;
 }
 
 void render_dungeon(dungeon_t *d){
   pair_t p;
-  clear();
-  //  mvaddch(,'\n');
-  for (p[dim_y] = 0; p[dim_y] < DUNGEON_Y; p[dim_y]++) {
+   for (p[dim_y] = 0; p[dim_y] < DUNGEON_Y; p[dim_y]++) {
     for (p[dim_x] = 0; p[dim_x] < DUNGEON_X; p[dim_x]++) {
       if (charpair(p)) {
         mvaddch(p[dim_y],p[dim_x],charpair(p)->symbol);
@@ -615,12 +628,60 @@ void render_dungeon(dungeon_t *d){
     mvaddch(p[dim_y],p[dim_x],'\n');
   }
   mvaddch(p[dim_y],p[dim_x],'\n');
-  //char in =getch();
-  //mvprintw(22,0,"input is:%d ", (int)in);
 
-  refresh();
 }
-
+void render_seen(dungeon_t *d)
+{
+  //see(d);
+ pair_t p;
+   for (p[dim_y] = 0; p[dim_y] < DUNGEON_Y; p[dim_y]++) {
+     for (p[dim_x] = 0; p[dim_x] < DUNGEON_X; p[dim_x]++) {
+       
+        switch (seenpair(p)) {
+	case ter_wall:
+        case ter_wall_immutable:
+          mvaddch(p[dim_y],p[dim_x],' ');
+          break;
+        case ter_floor:
+        case ter_floor_room:
+          mvaddch(p[dim_y],p[dim_x],'.');
+          break;
+        case ter_floor_hall:
+          mvaddch(p[dim_y],p[dim_x],'#');
+          break;
+	case ter_stair_up:
+          mvaddch(p[dim_y],p[dim_x],'<');
+          break;
+	case ter_stair_down:
+          mvaddch(p[dim_y],p[dim_x],'>');
+          break;
+        case ter_debug:
+          mvaddch(p[dim_y],p[dim_x],'*');
+          fprintf(stderr, "Debug character at %d, %d\n", p[dim_y], p[dim_x]);
+          break;
+        }
+      }
+   
+    mvaddch(p[dim_y],p[dim_x],'\n');
+  }
+  mvaddch(p[dim_y],p[dim_x],'\n');
+  int i=0;
+  int k=0;
+  for(i=0;i<5;i++)
+    {
+      for(k=0;k<5;k++)
+	{
+	    if(d->seen_mon[i][k]&&d->seen_mon[i][k]->alive)
+	    {
+	      character_t mon= *(d->seen_mon[i][k]);
+	      
+	      mvaddch(mon.position[1],mon.position[0],mon.symbol);
+	    }
+	  
+        }
+    }
+  mvaddch(d->pc.position[1],d->pc.position[0],'@');
+}
 void delete_dungeon(dungeon_t *d)
 {
   free(d->rooms);

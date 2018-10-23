@@ -38,8 +38,7 @@
 # define NPC_BIT30         0x40000000
 # define NPC_BIT31         0x80000000
 
-# define has_characteristic(character, bit)              \
-  ((character)->npc->characteristics & NPC_##bit)
+//#define has_characteristic(character, bit) ((character)->npc->characteristics & NPC_##bit)
 
 typedef struct dungeon dungeon_t;
 typedef struct character character_t;

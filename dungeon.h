@@ -23,6 +23,7 @@
 #define DUNGEON_SAVE_VERSION   0U
 
 #define mappair(pair) (d->map[pair[dim_y]][pair[dim_x]])
+#define seenpair(pair) (d->seen_map[pair[dim_y]][pair[dim_x]])
 #define mapxy(x, y) (d->map[y][x])
 #define hardnesspair(pair) (d->hardness[pair[dim_y]][pair[dim_x]])
 #define hardnessxy(x, y) (d->hardness[y][x])
@@ -49,6 +50,7 @@ typedef struct dungeon {
   uint32_t num_rooms;
   room_t *rooms;
   terrain_type_t map[DUNGEON_Y][DUNGEON_X];
+  terrain_type_t seen_map[DUNGEON_Y][DUNGEON_X];
   /* Since hardness is usually not used, it would be expensive to pull it *
    * into cache every time we need a map cell, so we store it in a        *
    * parallel array, rather than using a structure to represent the       *
@@ -65,6 +67,7 @@ typedef struct dungeon {
   heap_t events;
   uint16_t num_monsters;
   uint16_t max_monsters;
+  character_t* seen_mon[5][5];
   uint32_t character_sequence_number;
   /* Game time isn't strictly necessary.  It's implicit in the turn number *
    * of the most recent thing removed from the event queue; however,       *
@@ -79,6 +82,7 @@ void init_dungeon(dungeon_t *d);
 void delete_dungeon(dungeon_t *d);
 int gen_dungeon(dungeon_t *d);
 void render_dungeon(dungeon_t *d);
+void render_seen(dungeon_t *d);
 int write_dungeon(dungeon_t *d, char *file);
 int read_dungeon(dungeon_t *d, char *file);
 int read_pgm(dungeon_t *d, char *pgm);
