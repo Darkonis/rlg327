@@ -32,6 +32,8 @@ typedef struct character {
   npc_t *npc;
   pc_t *pc;
   uint32_t kills[num_kill_types];
+  uint8_t seen=0;
+  uint8_t known=0;
 } character_t;
 
 int32_t compare_characters_by_next_turn(const void *character1,

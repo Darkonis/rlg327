@@ -189,6 +189,16 @@ void see(dungeon_t *d)
     {
       xMax=80;
     }//edge checking
+  for(i=0;i<DUNGEON_Y;i++)
+    {
+      for(k=0;k<DUNGEON_X;k++)
+	{
+	  if(d->character[i][k])
+	    {
+	      d->character[i][k]->seen=0;
+	    }
+	}
+    }
   for(i=yMin;i<yMax;i++)
     {
       for(k=xMin;k<xMax;k++)
@@ -198,6 +208,8 @@ void see(dungeon_t *d)
 	  if(d->character[i][k])
 	    {
 	      d->seen_mon[i-yMin][k-xMin]=d->character[i][k];
+	      d->character[i][k]->seen=1;
+	      d->character[i][k]->known=1;
 	    }
 	}
 

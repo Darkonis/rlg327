@@ -93,7 +93,7 @@ void render_menu(dungeon_t *d,int curMenu)
        for (x = 0; x < DUNGEON_X; x++)
 	 {
 	   
-	   if(d->character[y][x]!=NULL&&d->character[y][x]->alive)//if there is a monster at this location
+	   if(d->character[y][x]!=NULL&&d->character[y][x]->known&&d->character[y][x]->alive)//if there is a monster at this location
 	     {
 	       if(m_count>=21*curMenu&&m_count<21*(curMenu+1))
 		 {
