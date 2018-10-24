@@ -219,6 +219,7 @@ char process_input(dungeon_t *d)
 	    }
 	  else
 	    {
+	      see(d);
 	      render_dungeon(d);
 	    }
 	}

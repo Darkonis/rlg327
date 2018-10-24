@@ -41,15 +41,16 @@
 //#define has_characteristic(character, bit) ((character)->npc->characteristics & NPC_##bit)
 
 class dungeon_t;
-typedef struct character character_t;
+class character_t;
 typedef uint32_t npc_characteristics_t;
 
-typedef struct npc {
-  npc_characteristics_t characteristics;
+ class npc_t  {
+ public:
+   npc_characteristics_t characteristics;
   uint32_t have_seen_pc;
   pair_t pc_last_known_position;
 
-} npc_t;
+}; 
 
 void gen_monsters(dungeon_t *d);
 void npc_delete(npc_t *n);

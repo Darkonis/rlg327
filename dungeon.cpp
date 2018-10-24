@@ -630,7 +630,7 @@ void render_dungeon(dungeon_t *d){
     mvaddch(p[dim_y],p[dim_x],'\n');
   }
   mvaddch(p[dim_y],p[dim_x],'\n');
-
+  mvaddch(d->pc.position[1],d->pc.position[0],'@');
 }
 void render_seen(dungeon_t *d)
 {

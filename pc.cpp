@@ -167,10 +167,10 @@ void see(dungeon_t *d)
   // character_t ret[9]; 
   int x=d->pc.position[0];
   int y=d->pc.position[1];
-  int xMin=x-2;
-  int xMax=x+3;
-  int yMin=y-2;
-  int yMax=y+3;
+  int xMin=x-3;
+  int xMax=x+4;
+  int yMin=y-3;
+  int yMax=y+4;
   int i=yMin;
   int k=xMin;
   if(yMin<0)

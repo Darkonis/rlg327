@@ -6,7 +6,7 @@
 # include "dims.h"
 
 class dungeon_t;
-typedef struct character character_t;
+ class character_t;
 
 void next_move(dungeon_t *d,
                character_t *c,

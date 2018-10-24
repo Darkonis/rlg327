@@ -55,10 +55,10 @@ class dungeon_t {
   terrain_type_t seen_map[DUNGEON_Y][DUNGEON_X];
   /* Since hardness is usually not used, it would be expensive to pull it *
    * into cache every time we need a map cell, so we store it in a        *
-   * parallel array, rather than using a structure to represent the       *
-   * cells.  We may want a cell structure later, but from a performanace  *
+   * parallel array, rather than using a  to represent the       *
+   * cells.  We may want a cell  later, but from a performanace  *
    * perspective, it would be a bad idea to ever have the map be part of  *
-   * that structure.  Pathfinding will require efficient use of the map,  *
+   * that .  Pathfinding will require efficient use of the map,  *
    * and pulling in unnecessary data with each map cell would add a lot   *
    * of overhead to the memory system.                                    */
   uint8_t hardness[DUNGEON_Y][DUNGEON_X];
@@ -69,7 +69,7 @@ class dungeon_t {
   heap_t events;
   uint16_t num_monsters;
   uint16_t max_monsters;
-  character_t* seen_mon[5][5];
+  character_t* seen_mon[6][6];
   uint32_t character_sequence_number;
   /* Game time isn't strictly necessary.  It's implicit in the turn number *
    * of the most recent thing removed from the event queue; however,       *
