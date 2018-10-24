@@ -606,7 +606,9 @@ void render_dungeon(dungeon_t *d){
           mvaddch(p[dim_y],p[dim_x],' ');
           break;
         case ter_floor:
-        case ter_floor_room:
+
+
+	case ter_floor_room:
           mvaddch(p[dim_y],p[dim_x],'.');
           break;
         case ter_floor_hall:

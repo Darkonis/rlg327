@@ -9,7 +9,7 @@
 #include "pc.h"
 #include "npc.h"
 #include "move.h"
-
+#include <stdbool.h>
 
 const char *victory =
   "\n                                       o\n"
@@ -137,13 +137,91 @@ void render_menu(dungeon_t *d,int curMenu)
     }
   refresh();
 }
+bool isFow=true;
+void teleMove(dungeon_t *d,int in,int *tarX,int *tarY);
 char process_input(dungeon_t *d)
 {
+  if(isFow)
+    {
   see(d);
   render_seen(d);
-  
+    }
+  else
+    {
+      render_dungeon(d);
+    }
   int in;
       in = getch();
+      if(in=='f')
+	{
+	  isFow=!isFow;
+	  return in;
+	}
+      if(in=='g')
+	{
+	  in='a';//make sure it doesn;t enter the loop
+	  int tarX=d->pc.position[0];
+	  int tarY=d->pc.position[1];
+	  d->character[d->pc.position[dim_y]][d->pc.position[dim_x]] = NULL;
+	  render_dungeon(d);
+	  mvaddch(tarY,tarX,'&');
+	  refresh();
+	  while(in!='g'&&in!='r'&&in!='Q')
+	    {
+	      render_dungeon(d);
+	       mvaddch(tarY,tarX,'&');
+	       refresh();
+	      in=getch();
+	      if(in=='r')
+		{
+		 tarY=rand()%19+1;
+		 tarX=rand()%78+1;
+		  pair_t next;
+                 next[1]=tarY;
+                 next[0]=tarX;
+                 if(charpair(next))
+                   {
+                     //charpair(next)->alive=0;
+                     move_character(d,&(d->pc),next);
+                   }
+                 d->pc.position[1]=tarY;
+	             d->pc.position[0]=tarX;
+
+		  continue;
+		}
+	      else if(in=='g')
+		{
+		  //d->pc.position[1]=tarY;
+		  //d->pc.position[0]=tarX;
+		 pair_t next;
+		 next[1]=tarY;
+		 next[0]=tarX;
+		 if(charpair(next))
+		   {
+		     //charpair(next)->alive=0;
+		     move_character(d,&(d->pc),next);
+		   }
+		 d->pc.position[1]=tarY;
+                     d->pc.position[0]=tarX;
+
+		 
+		}
+	      else
+		{
+		  teleMove(d,in,&tarX,&tarY);
+		}
+	      refresh();
+	    }
+	  if(isFow)
+	    {
+	      see(d);
+	      render_seen(d);
+	    }
+	  else
+	    {
+	      render_dungeon(d);
+	    }
+	}
       if(in=='m')
 	{
 	  clear();
@@ -198,6 +276,65 @@ char process_input(dungeon_t *d)
       see(d);
       render_seen(d);
       return in;
+
+}
+void teleMove(dungeon_t *d,int in,int *tarX,int *tarY)
+{
+  switch(in)
+    {
+    case 54:
+    case 108:
+      (*tarX)++;
+      break;
+    case 52:
+    case 104:
+      (*tarX)--;
+      break;
+    case 'k':
+    case 56:
+      (*tarY)--;
+      break;
+    case 'j':
+    case 50:
+      (*tarY)++;
+      break;
+    case 'b':
+    case 49:
+      (*tarX)--;
+      (*tarY)++;
+      break;
+    case'n':
+    case 51:
+      (*tarX)++;
+      (*tarY)++;
+      break;
+    case 'u':
+    case 57:
+      (*tarX)++;
+      (*tarY)--;
+	break;
+    case 'y':
+    case 55:
+      (*tarX)--;
+      (*tarY)--;
+      break;
+    }
+  if(!tarX)
+    {
+      (*tarX)++;
+    }
+  if((*tarX)==79)
+    {
+      (*tarX)--;
+    }
+  if(!tarY)
+    {
+      (*tarY)++;
+    }
+  if((*tarY)==20)
+    {
+      (*tarY)--;
+    }
 
 }
 int main(int argc, char *argv[])

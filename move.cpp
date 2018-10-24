@@ -35,7 +35,6 @@ void move_character(dungeon_t *d, character_t *c, pair_t next)
     do_combat(d, c, charpair(next));
   } else {
     /* No character in new position. */
-
     d->character[c->position[dim_y]][c->position[dim_x]] = NULL;
     c->position[dim_y] = next[dim_y];
     c->position[dim_x] = next[dim_x];
@@ -187,8 +186,8 @@ void do_moves(dungeon_t *d,char *in)
           }
       }
     
-     see(d);
-    render_dungeon(d);
+    //     see(d);
+    //render_dungeon(d);
 	  
 	  return;
 	}
@@ -250,8 +249,8 @@ void do_moves(dungeon_t *d,char *in)
       {
 	return;
       }
-    see(d);
-    render_seen(d);
+    // see(d);
+    //render_seen(d);
     move_character(d, c, next);
     
     dijkstra(d);
