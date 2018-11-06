@@ -1,18 +1,19 @@
-CC = gcc
+xCC = gcc
 CXX = g++
 ECHO = echo
 RM = rm -f
 
-CFLAGS = -Wall -Werror -ggdb3 -funroll-loops
-CXXFLAGS = -Wall -Werror -ggdb3 -funroll-loops -fstack-protector-all
-LDFLAGS = -lncurses
+CFLAGS = -Wall -Werror -ggdb3 -funroll-loops -lncurses
+CXXFLAGS = -Wall -Werror -ggdb3 -funroll-loops -lncurses                               
+LDFLAGS = -lncurses 
 
 BIN = rlg327
-OBJS = rlg327.o heap.o dungeon.o path.o utils.o pc.o dice.o \
-       npc.o move.o event.o character.o io.o monster_template.o \
-	parser_monsters.o
+OBJS = rlg327.o heap.o dungeon.o path.o utils.o pc.o \
+       npc.o move.o event.o character.o
+#default:
 
 all: $(BIN) etags
+
 
 $(BIN): $(OBJS)
 	@$(ECHO) Linking $@
@@ -40,4 +41,4 @@ clobber: clean
 
 etags:
 	@$(ECHO) Updating TAGS
-	@etags *.cpp *.h
+	@etags *.[ch]

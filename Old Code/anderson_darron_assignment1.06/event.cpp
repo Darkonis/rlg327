@@ -15,31 +15,31 @@ int32_t compare_events(const void *event1, const void *event2)
 {
   int32_t difference;
 
-  difference = (((event *) event1)->time -
-                ((event *) event2)->time);
-  return difference ? difference : (((event *) event1)->sequence -
-                                    ((event *) event2)->sequence);
+  difference = (((event_t *) event1)->time -
+                ((event_t *) event2)->time);
+  return difference ? difference : (((event_t *) event1)->sequence -
+                                    ((event_t *) event2)->sequence);
 
 }
 
-event *new_event(dungeon *d, eventype_t t, void *v, uint32_t delay)
+event_t *new_event(dungeon_t *d, event_type_t t, void *v, uint32_t delay)
 {
-  event *e;
+  event_t *e;
 
-  e = (event *) malloc(sizeof (*e));
+  e = (event_t*) malloc(sizeof (*e));
 
   e->type = t;
   e->time = d->time + delay;
   e->sequence = next_event_number();
   switch (t) {
-  case event_characterurn:
-    e->c = (character *) v;
+  case event_character_turn:
+    e->c =(character_t*) v;
   }
 
   return e;
 }
 
-event *update_event(dungeon *d, event *e, uint32_t delay)
+event_t *update_event(dungeon_t *d, event_t *e, uint32_t delay)
 {
   e->time = d->time + delay;
   e->sequence = next_event_number();
@@ -47,15 +47,15 @@ event *update_event(dungeon *d, event *e, uint32_t delay)
   return e;
 }
 
-void event_delete(void *v)
+void event_delete(void *e)
 {
-  event *e = (event *) v;
+  event_t *event =(event_t*) e;
 
-  switch (e->type) {
-  case event_characterurn:
-    character_delete(e->c);
+  switch (event->type) {
+  case event_character_turn:
+    character_delete(event->c);
     break;
   }
 
-  free(e);
+  free(event);
 }

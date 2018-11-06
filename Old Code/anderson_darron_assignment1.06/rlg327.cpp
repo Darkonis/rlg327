@@ -1,18 +1,16 @@
-#include <stdio.h>
-#include <iostream>
+//#include <stdio.h>
 #include <string>
 #include <sys/time.h>
 #include <unistd.h>
-//#define _CRTDBG_MAP_ALLOC
+#include <ncurses.h>
 /* Very slow seed: 686846853 */
-//#include <crtdbg>
+
 #include "dungeon.h"
 #include "pc.h"
 #include "npc.h"
 #include "move.h"
-#include "io.h"
-#include "dice.h"
-#include "parser_monsters.h"
+#include <stdbool.h>
+
 const char *victory =
   "\n                                       o\n"
   "                                      $\"\"$o\n"
@@ -64,7 +62,14 @@ const char *tombstone =
   "            |......\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"......"
   "..\"\"\"\"\"....\"\"\"\"\"..\"\"...\"\"\".\n\n"
   "            You're dead.  Better luck in the next life.\n\n\n";
-
+ void to_init_terminal(void)
+    {
+      initscr();
+      raw();
+      noecho();
+      curs_set(0);
+      keypad(stdscr, TRUE);
+    }
 void usage(char *name)
 {
   fprintf(stderr,
@@ -75,18 +80,276 @@ void usage(char *name)
 
   exit(-1);
 }
+void render_menu(dungeon_t *d,int curMenu)
+{
+  // erase();//clean the screen from input
+  // refresh();
+  int lineNum=1;
+  int m_count=0;
+  int x;
+  int y;
+  for(y=0;y<DUNGEON_Y;y++)
+    {
+       for (x = 0; x < DUNGEON_X; x++)
+	 {
+	   
+	   if(d->character[y][x]!=NULL&&d->character[y][x]->known&&d->character[y][x]->alive)//if there is a monster at this location
+	     {
+	       if(m_count>=21*curMenu&&m_count<21*(curMenu+1))
+		 {
+		   int xdif=d->pc.position[0]-x;
+		   int ydif= d->pc.position[1]-y;
+		   if(!xdif&&!ydif)
+		     {
+		       continue;
+		     }
+		   mvprintw(lineNum,0,"Monster num:%d, Monster symbol %c is ",m_count,d->character[y][x]->symbol);
+		   if(xdif>0)
+		     {
+		       printw("%d spaces west ",xdif);//35
+		     }
+		   else if(xdif<0)
+		     {
+		       printw("%d spaces east ",-xdif);
+		     }
+		   if(xdif&&ydif)
+		     {
+		       printw("and ");
+		     }
+		   if(ydif<0)
+		     {
+		       printw("%d spaces south",-ydif);
+		     }
+		   else if(ydif>0)
+		     {
+		       printw("%d spaces north",ydif);
+		     }
+		   lineNum++;
+		   m_count++;
+		 }
+	       else
+		 {
+		   m_count++;
+		 }
+	     }
+	 }
+       
+    }
+  refresh();
+}
+bool isFow=true;
+void teleMove(dungeon_t *d,int in,int *tarX,int *tarY);
+char process_input(dungeon_t *d)
+{
+  if(isFow)
+    {
+  see(d);
+  render_seen(d);
+    }
+  else
+    {
+      render_dungeon(d);
+    }
+  int in;
+      in = getch();
+      if(in=='f')
+	{
+	  isFow=!isFow;
+	  return in;
+	}
+      if(in=='g')
+	{
+	  in='a';//make sure it doesn;t enter the loop
+	  int tarX=d->pc.position[0];
+	  int tarY=d->pc.position[1];
+	  d->character[d->pc.position[dim_y]][d->pc.position[dim_x]] = NULL;
+	  render_dungeon(d);
+	  mvaddch(tarY,tarX,'&');
+	  refresh();
+	  while(in!='g'&&in!='r'&&in!='Q')
+	    {
+	      render_dungeon(d);
+	       mvaddch(tarY,tarX,'&');
+	       refresh();
+	      in=getch();
+	      if(in=='r')
+		{
+		 tarY=rand()%19+1;
+		 tarX=rand()%78+1;
+		  pair_t next;
+                 next[1]=tarY;
+                 next[0]=tarX;
+                 if(charpair(next))
+                   {
+                     //charpair(next)->alive=0;
+                     move_character(d,&(d->pc),next);
+                   }
+                 d->pc.position[1]=tarY;
+	             d->pc.position[0]=tarX;
 
+		  continue;
+		}
+	      else if(in=='g')
+		{
+		  //d->pc.position[1]=tarY;
+		  //d->pc.position[0]=tarX;
+		 pair_t next;
+		 next[1]=tarY;
+		 next[0]=tarX;
+		 if(charpair(next))
+		   {
+		     //charpair(next)->alive=0;
+		     move_character(d,&(d->pc),next);
+		   }
+		 d->pc.position[1]=tarY;
+                     d->pc.position[0]=tarX;
+
+		 
+		}
+	      else
+		{
+		  teleMove(d,in,&tarX,&tarY);
+		}
+	      refresh();
+	    }
+	  if(isFow)
+	    {
+	      see(d);
+	      render_seen(d);
+	    }
+	  else
+	    {
+	      see(d);
+	      render_dungeon(d);
+	    }
+	}
+      if(in=='m')
+	{
+	  clear();
+	  int curMenu=0;
+	  while(in!=27&&in!='Q')
+	    {
+	      if(in == KEY_DOWN&&curMenu!=d->num_monsters/21)
+		{
+		  curMenu++;
+		}
+	      else if(in==KEY_UP&&curMenu!=0)
+		{
+		  curMenu--;
+		}
+	      //erase();
+	      mvprintw(22,0,"input is:%d and curMenu is %d", in,curMenu);
+	       render_menu(d,curMenu);
+	      in=getch();
+	    }
+	}
+      
+      switch(in)
+	{
+	case 48:
+	case 49:
+	case 50:
+	case 51:
+	case 52:
+	case 53:
+	case 54:
+	case 55:
+	case 56:
+	case 57:
+	case 121://y
+	case 107 ://k
+	case 117://u
+	case 108://l
+	case 110://n
+	case 106://j
+	case 98://b
+	case 104://h
+	case 60://<
+	case 62 ://>
+	case (char )' ':
+	  mvprintw(22,0,"input is:%c ", in);
+	  char l = (char) in;
+	  do_moves(d,&l);
+	   mvprintw(2,0,"input is:%c ", in);
+	   refresh();
+	   break;
+	}
+      see(d);
+      render_seen(d);
+      return in;
+
+}
+void teleMove(dungeon_t *d,int in,int *tarX,int *tarY)
+{
+  switch(in)
+    {
+    case 54:
+    case 108:
+      (*tarX)++;
+      break;
+    case 52:
+    case 104:
+      (*tarX)--;
+      break;
+    case 'k':
+    case 56:
+      (*tarY)--;
+      break;
+    case 'j':
+    case 50:
+      (*tarY)++;
+      break;
+    case 'b':
+    case 49:
+      (*tarX)--;
+      (*tarY)++;
+      break;
+    case'n':
+    case 51:
+      (*tarX)++;
+      (*tarY)++;
+      break;
+    case 'u':
+    case 57:
+      (*tarX)++;
+      (*tarY)--;
+	break;
+    case 'y':
+    case 55:
+      (*tarX)--;
+      (*tarY)--;
+      break;
+    }
+  if(!tarX)
+    {
+      (*tarX)++;
+    }
+  if((*tarX)==79)
+    {
+      (*tarX)--;
+    }
+  if(!tarY)
+    {
+      (*tarY)++;
+    }
+  if((*tarY)==20)
+    {
+      (*tarY)--;
+    }
+
+}
 int main(int argc, char *argv[])
 {
-  dungeon d;
+  dungeon_t d;
   time_t seed;
   struct timeval tv;
-  int32_t i;
+  uint32_t i;
   uint32_t do_load, do_save, do_seed, do_image, do_save_seed, do_save_image;
   uint32_t long_arg;
   char *save_file;
   char *load_file;
   char *pgm_file;
+  to_init_terminal();
   /* Quiet a false positive from valgrind. */
   memset(&d, 0, sizeof (d));
   
@@ -96,21 +359,7 @@ int main(int argc, char *argv[])
   do_seed = 1;
   save_file = load_file = NULL;
   d.max_monsters = MAX_MONSTERS;
-  {
-  if(parse(&d)==-1)
-    {
-      exit(-1);
-    }
-  for(i=0;i<d.num_possible;i++)
-    {
-      d.valid_mon[i].print_template();
-      std::cout<<"\n";
-    }
-  }
-  delete_dungeon(&d);
-  //  _CrtDumpMemoryLeaks();
-  exit(0);
-  //print(&d);
+
   /* The project spec requires '--load' and '--save'.  It's common  *
    * to have short and long forms of most switches (assuming you    *
    * don't run out of letters).  For now, we've got plenty.  Long   *
@@ -126,7 +375,7 @@ int main(int argc, char *argv[])
    * interesting test dungeons for you.                             */
  
  if (argc > 1) {
-    for (i = 1, long_arg = 0; i < argc; i++, long_arg = 0) {
+   for (i = 1, long_arg = 0; i <(unsigned)argc; i++, long_arg = 0) {
       if (argv[i][0] == '-') { /* All switches start with a dash */
         if (argv[i][1] == '-') {
           argv[i]++;    /* Make the argument have a single dash so we can */
@@ -134,9 +383,9 @@ int main(int argc, char *argv[])
         }
         switch (argv[i][1]) {
         case 'n':
-          if ((!long_arg && argv[i][2]) ||
+          if ((!long_arg && (unsigned)argv[i][2]) ||
               (long_arg && strcmp(argv[i], "-nummon")) ||
-              argc < ++i + 1 /* No more arguments */ ||
+              (unsigned)argc < ++i + 1 /* No more arguments */ ||
               !sscanf(argv[i], "%hu", &d.max_monsters)) {
             usage(argv[0]);
           }
@@ -144,7 +393,7 @@ int main(int argc, char *argv[])
         case 'r':
           if ((!long_arg && argv[i][2]) ||
               (long_arg && strcmp(argv[i], "-rand")) ||
-              argc < ++i + 1 /* No more arguments */ ||
+              (unsigned)argc < ++i + 1 /* No more arguments */ ||
               !sscanf(argv[i], "%lu", &seed) /* Argument is not an integer */) {
             usage(argv[0]);
           }
@@ -156,7 +405,7 @@ int main(int argc, char *argv[])
             usage(argv[0]);
           }
           do_load = 1;
-          if ((argc > i + 1) && argv[i + 1][0] != '-') {
+          if (((unsigned)argc > i + 1) && argv[i + 1][0] != '-') {
             /* There is another argument, and it's not a switch, so *
              * we'll treat it as a save file and try to load it.    */
             load_file = argv[++i];
@@ -168,7 +417,7 @@ int main(int argc, char *argv[])
             usage(argv[0]);
           }
           do_save = 1;
-          if ((argc > i + 1) && argv[i + 1][0] != '-') {
+          if (((unsigned)argc > i + 1) && argv[i + 1][0] != '-') {
             /* There is another argument, and it's not a switch, so *
              * we'll save to it.  If it is "seed", we'll save to    *
 	     * <the current seed>.rlg327.  If it is "image", we'll  *
@@ -190,7 +439,7 @@ int main(int argc, char *argv[])
             usage(argv[0]);
           }
           do_image = 1;
-          if ((argc > i + 1) && argv[i + 1][0] != '-') {
+          if (((unsigned)argc > i + 1) && argv[i + 1][0] != '-') {
             /* There is another argument, and it's not a switch, so *
              * we'll treat it as a save file and try to load it.    */
             pgm_file = argv[++i];
@@ -212,38 +461,63 @@ int main(int argc, char *argv[])
     seed = (tv.tv_usec ^ (tv.tv_sec << 20)) & 0xffffffff;
   }
 
+  if (!do_load && !do_image) {
+    printf("Seed is %ld.\n", seed);
+  }
   srand(seed);
 
-  io_init_terminal();
   init_dungeon(&d);
-  
+
   if (do_load) {
     read_dungeon(&d, load_file);
   } else if (do_image) {
     read_pgm(&d, pgm_file);
   } else {
     gen_dungeon(&d);
+    int t=0;
+    while(t==0)
+      {
+	int i = rand()%21;
+	int k=rand()%80;
+	if(d.map[i][k]==ter_floor_room)
+	  {
+	    t=1;
+	    d.map[i][k]=ter_stair_up;
+ 	  }
+      }
+    t=0;
+    while(t==0)
+      {
+        int i = rand()%21;
+	int k=rand()%80;
+        if(d.map[i][k]==ter_floor_room)
+          {
+            t= 1;
+            d.map[i][k]=ter_stair_down;
+          }
+      }
+
+    
   }
-  //parse(&d,"/monsters/monster_desc.txt");
+
   /* Ignoring PC position in saved dungeons.  Not a bug. */
   config_pc(&d);
   gen_monsters(&d);
-
-  io_display(&d);
-  if (!do_load && !do_image) {
-    io_queue_message("Seed is %u.", seed);
+  
+  // int isMenu=0;
+  // int curMenu=0;
+  while (pc_is_alive(&d) && dungeon_has_npcs(&d)) {
+    
+   char t= process_input(&d);
+   if (t=='Q')
+     {
+       break;
+     }
   }
-  while (pc_is_alive(&d) && dungeon_has_npcs(&d) && !d.quit) {
-    do_moves(&d);
-  }
-  io_display(&d);
-
-  io_reset_terminal();
-
   if (do_save) {
     if (do_save_seed) {
        /* 10 bytes for number, please dot, extention and null terminator. */
-      save_file = (char *) malloc(18);
+      save_file = (char*)malloc(18);
       sprintf(save_file, "%ld.rlg327", seed);
     }
     if (do_save_image) {
@@ -252,7 +526,7 @@ int main(int argc, char *argv[])
 	do_save_image = 0;
       } else {
 	/* Extension of 3 characters longer than image extension + null. */
-	save_file = (char *) malloc(strlen(pgm_file) + 4);
+	save_file = (char*)malloc(strlen(pgm_file) + 4);
 	strcpy(save_file, pgm_file);
 	strcpy(strchr(save_file, '.') + 1, "rlg327");
       }
@@ -263,21 +537,25 @@ int main(int argc, char *argv[])
       free(save_file);
     }
   }
-
+  if(endwin()!=0)
+    {
+      printf("error deinitilizing ncurses");
+    }
+  clear();
   printf("%s", pc_is_alive(&d) ? victory : tombstone);
   printf("You defended your life in the face of %u deadly beasts.\n"
          "You avenged the cruel and untimely murders of %u "
          "peaceful dungeon residents.\n",
-         d.PC->kills[kill_direct], d.PC->kills[kill_avenged]);
+         d.pc.kills[kill_direct], d.pc.kills[kill_avenged]);
 
-  if (pc_is_alive(&d)) {
-    /* If the PC is dead, it's in the move heap and will get automatically *
-     * deleted when the heap destructs.  In that case, we can't call       *
-     * delete_pc(), because it will lead to a double delete.               */
-    character_delete(d.PC);
-  }
-
+  pc_delete(d.pc.pc);
+  /*  if(endwin()!=0)
+    {
+      printf("error deinitilizing ncurses");
+    }
+  */
   delete_dungeon(&d);
-
+  //  _nc_free_and_exit();
+  //ExitProgram();
   return 0;
 }

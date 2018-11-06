@@ -4,7 +4,6 @@
 # include <stdint.h>
 
 # include "dims.h"
-# include "character.h"
 
 # define NPC_SMART         0x00000001
 # define NPC_TELEPATH      0x00000002
@@ -39,23 +38,23 @@
 # define NPC_BIT30         0x40000000
 # define NPC_BIT31         0x80000000
 
-# define has_characteristic(character, bit)              \
-  ((character)->npc->characteristics & NPC_##bit)
+//#define has_characteristic(character, bit) ((character)->npc->characteristics & NPC_##bit)
 
+class dungeon_t;
+class character_t;
 typedef uint32_t npc_characteristics_t;
 
-class npc : public character {
+ class npc_t  {
  public:
-  npc_characteristics_t characteristics;
+   npc_characteristics_t characteristics;
   uint32_t have_seen_pc;
   pair_t pc_last_known_position;
-  npc(char,int32_t,std::string,int,std::string,int,int,std::string*,std::string);
-  npc();
-};
 
-void gen_monsters(dungeon *d);
-void npc_delete(npc *n);
-void npc_next_pos(dungeon *d, npc *c, pair_t next);
-uint32_t dungeon_has_npcs(dungeon *d);
+}; 
+
+void gen_monsters(dungeon_t *d);
+void npc_delete(npc_t *n);
+void npc_next_pos(dungeon_t *d, character_t *c, pair_t next);
+uint32_t dungeon_has_npcs(dungeon_t *d);
 
 #endif
