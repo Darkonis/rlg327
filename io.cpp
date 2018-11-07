@@ -9,7 +9,6 @@
 #include "pc.h"
 #include "utils.h"
 #include "dungeon.h"
-
 /* Same ugly hack we did in path.c */
 static dungeon *thedungeon;
 
@@ -198,14 +197,112 @@ static character *io_nearest_visible_monster(dungeon *d)
 
   return n;
 }
+int can_see_item(dungeon *d , pair_t voyeur,pair_t exhibitionist,int is_pc, int learn)
+{
+   pair_t first, second;
+  pair_t del, f;
+  int16_t a, b, c, i;
+  int16_t visual_range;
 
+  visual_range = PC_VISUAL_RANGE;
+
+  first[dim_x] = voyeur[dim_x];
+  first[dim_y] = voyeur[dim_y];
+  second[dim_x] = exhibitionist[dim_x];
+  second[dim_y] = exhibitionist[dim_y];
+
+  /* Monsters only use this to see the PC, so we can *                                                                                                                                                      
+   * short circuit the tests when they are far away. */
+  if ((abs(first[dim_x] - second[dim_x]) > visual_range) ||
+      (abs(first[dim_y] - second[dim_y]) > visual_range)) {
+    return 0;
+  }
+
+  /*                                                                                                                                                                                                        
+  mappair(first) = ter_debug;                                                                                                                                                                               
+  mappair(second) = ter_debug;                                                                                                                                                                              
+  */
+
+  if (second[dim_x] > first[dim_x]) {
+    del[dim_x] = second[dim_x] - first[dim_x];
+    f[dim_x] = 1;
+  } else {
+    del[dim_x] = first[dim_x] - second[dim_x];
+    f[dim_x] = -1;
+  }
+  if (second[dim_y] > first[dim_y]) {
+    del[dim_y] = second[dim_y] - first[dim_y];
+    f[dim_y] = 1;
+  } else {
+    del[dim_y] = first[dim_y] - second[dim_y];
+    f[dim_y] = -1;
+  }
+
+  if (del[dim_x] > del[dim_y]) {
+    a = del[dim_y] + del[dim_y];
+    c = a - del[dim_x];
+    b = c - del[dim_x];
+    for (i = 0; i <= del[dim_x]; i++) {
+      if (learn) {
+        pc_learn_terrain(d->PC, first, mappair(first));
+      }
+      if ((mappair(first) < ter_floor) && i && (i != del[dim_x])) {
+        return 0;
+      }
+      /*      mappair(first) = ter_debug;*/
+      first[dim_x] += f[dim_x];
+      if (c < 0) {
+        c += a;
+      } else {
+        c += b;
+        first[dim_y] += f[dim_y];
+      }
+    }
+    return 1;
+  }
+  if (second[dim_y] > first[dim_y]) {
+    del[dim_y] = second[dim_y] - first[dim_y];
+    f[dim_y] = 1;
+  } else {
+    del[dim_y] = first[dim_y] - second[dim_y];
+    f[dim_y] = -1;
+  }
+
+  if (del[dim_x] > del[dim_y]) {
+    a = del[dim_y] + del[dim_y];
+    c = a - del[dim_x];
+    b = c - del[dim_x];
+    for (i = 0; i <= del[dim_x]; i++) {
+      if (learn) {
+        pc_learn_terrain(d->PC, first, mappair(first));
+      }
+      if ((mappair(first) < ter_floor) && i && (i != del[dim_x])) {
+        return 0;
+      }
+      /*      mappair(first) = ter_debug;*/
+      first[dim_x] += f[dim_x];
+      if (c < 0) {
+        c += a;
+      } else {
+        c += b;
+        first[dim_y] += f[dim_y];
+      }
+    }
+    return 1;
+  }
+  return 1;
+}
+int16_t *item_get_pos(item* i)
+{
+  return i->position;
+}
 void io_display(dungeon *d)
 {
   uint32_t y, x;
   uint32_t illuminated;
   character *c;
   int32_t visible_monsters;
-
+  int32_t visible_items;
   clear();
   for (visible_monsters = -1, y = 0; y < 21; y++) {
     for (x = 0; x < 80; x++) {
@@ -217,10 +314,38 @@ void io_display(dungeon *d)
                   character_get_pos(d->PC),
                   character_get_pos(d->character_map[y][x]),
                   1, 0)) {
-        mvaddch(y + 1, x,
-                character_get_symbol(d->character_map[y][x]));
+	
+         if((npc*)d->character_map[y][x]&&((npc*)d->character_map[y][x])->color.size()&&\
+((npc*)d->character_map[y][x])->color[0])
+          {
+
+            attron(COLOR_PAIR(((npc*)d->character_map[y][x])->color[0]));
+            mvaddch(y + 1, x, d->character_map[y][x]->symbol);
+            attroff(COLOR_PAIR(((npc*)d->character_map[y][x])->color[0]));
+          }
+        else
+          {
+             mvaddch(y + 1, x, d->character_map[y][x]->symbol);
+          }
+
         visible_monsters++;
-      } else {
+      }else if (d->item_map[y][x] && can_see_item(d, character_get_pos(d->PC),item_get_pos(d->item_map[y][x]), 1, 0))                                                                       
+        {
+         if(d->item_map[y][x]&&(d->item_map[y][x])->color)
+          {
+            attron(COLOR_PAIR((d->item_map[y][x])->color));
+            mvaddch(y + 1, x, d->item_map[y][x]->symbol);
+            attroff(COLOR_PAIR((d->item_map[y][x])->color));
+          }
+        else
+          {
+             mvaddch(y + 1, x, d->item_map[y][x]->symbol);
+          }
+
+        visible_items++;
+      }
+
+      else {
         switch (pc_learned_terrain(d->PC, y, x)) {
         case ter_wall:
         case ter_wall_immutable:
@@ -262,8 +387,8 @@ void io_display(dungeon *d)
   mvprintw(22, 30, "Nearest visible monster: ");
   if ((c = io_nearest_visible_monster(d))) {
     attron(COLOR_PAIR(COLOR_RED));
-    mvprintw(22, 55, "%c at %d %c by %d %c.",
-             c->symbol,
+    mvprintw(22, 55, "%s at %d %c by %d %c.",
+             (((npc*)c)->name).c_str(),
              abs(c->position[dim_y] - d->PC->position[dim_y]),
              ((c->position[dim_y] - d->PC->position[dim_y]) <= 0 ?
               'N' : 'S'),
@@ -291,8 +416,35 @@ void io_display_no_fog(dungeon *d)
   for (y = 0; y < 21; y++) {
     for (x = 0; x < 80; x++) {
       if (d->character_map[y][x]) {
-        mvaddch(y + 1, x, d->character_map[y][x]->symbol);
-      } else {
+	//attron(COLOR_PAIR(COLOR_BLUE));
+	if((npc*)d->character_map[y][x]&&((npc*)d->character_map[y][x])->color.size()&&((npc*)d->character_map[y][x])->color[0])
+	  {
+	    
+	    attron(COLOR_PAIR(((npc*)d->character_map[y][x])->color[0]));
+	    mvaddch(y + 1, x, d->character_map[y][x]->symbol);
+	    attroff(COLOR_PAIR(((npc*)d->character_map[y][x])->color[0]));
+	  }
+	else
+	  {
+	     mvaddch(y + 1, x, d->character_map[y][x]->symbol);
+	  }
+	//attroff(COLOR_PAIR(COLOR_BLUE));
+      } else if(d->item_map[y][x])
+	  {
+	     if(d->item_map[y][x]&&(d->item_map[y][x])->color&&\
+(d->item_map[y][x])->color)
+          {
+
+            attron(COLOR_PAIR((d->item_map[y][x])->color));
+            mvaddch(y + 1, x, d->item_map[y][x]->symbol);
+            attroff(COLOR_PAIR((d->item_map[y][x])->color));
+          }
+        else
+          {
+	    mvaddch(y + 1, x, d->item_map[y][x]->symbol);
+          }
+
+	  }else {
         switch (mapxy(x, y)) {
         case ter_wall:
         case ter_wall_immutable:
@@ -330,8 +482,8 @@ void io_display_no_fog(dungeon *d)
   mvprintw(22, 30, "Nearest visible monster: ");
   if ((c = io_nearest_visible_monster(d))) {
     attron(COLOR_PAIR(COLOR_RED));
-    mvprintw(22, 55, "%c at %d %c by %d %c.",
-             c->symbol,
+    mvprintw(22, 55, "%s at %d %c by %d %c.",
+             (((npc*)c)->name).c_str(),
              abs(c->position[dim_y] - d->PC->position[dim_y]),
              ((c->position[dim_y] - d->PC->position[dim_y]) <= 0 ?
               'N' : 'S'),
@@ -363,6 +515,7 @@ uint32_t io_teleport_pc(dungeon *d)
   int c;
   int actual;
 
+  pc_reset_visibility(d->PC);
   io_display_no_fog(d);
 
   mvprintw(0, 0,
@@ -403,80 +556,84 @@ uint32_t io_teleport_pc(dungeon *d)
         break;
       }      
     }
+    /*if(d->item_map[dim_y][dim_x])
 
+      {
+	actual = d->item_map[dim_y][dim_x]->symbol;
+	}*/
     mvaddch(dest[dim_y] + 1, dest[dim_x], actual);
 
     switch (c) {
     case '7':
     case 'y':
     case KEY_HOME:
-      if (dest[dim_y] != 1) {
+      if (dest[dim_y] > 1) {
         dest[dim_y]--;
       }
-      if (dest[dim_x] != 1) {
+      if (dest[dim_x] > 1) {
         dest[dim_x]--;
       }
       break;
     case '8':
     case 'k':
     case KEY_UP:
-      if (dest[dim_y] != 1) {
+      if (dest[dim_y] > 1) {
         dest[dim_y]--;
       }
       break;
     case '9':
     case 'u':
     case KEY_PPAGE:
-      if (dest[dim_y] != 1) {
+      if (dest[dim_y] > 1) {
         dest[dim_y]--;
       }
-      if (dest[dim_x] != DUNGEON_X - 1) {
+      if (dest[dim_x] < DUNGEON_X - 2) {
         dest[dim_x]++;
       }
       break;
     case '6':
     case 'l':
     case KEY_RIGHT:
-      if (dest[dim_x] != DUNGEON_X - 1) {
+      if (dest[dim_x] < DUNGEON_X - 2) {
         dest[dim_x]++;
       }
       break;
     case '3':
     case 'n':
     case KEY_NPAGE:
-      if (dest[dim_y] != DUNGEON_Y - 1) {
+      if (dest[dim_y] < DUNGEON_Y - 2) {
         dest[dim_y]++;
       }
-      if (dest[dim_x] != DUNGEON_X - 1) {
+      if (dest[dim_x] < DUNGEON_X - 2) {
         dest[dim_x]++;
       }
       break;
     case '2':
     case 'j':
     case KEY_DOWN:
-      if (dest[dim_y] != DUNGEON_Y - 1) {
+      if (dest[dim_y] < DUNGEON_Y - 2) {
         dest[dim_y]++;
       }
       break;
     case '1':
     case 'b':
     case KEY_END:
-      if (dest[dim_y] != DUNGEON_Y - 1) {
+      if (dest[dim_y] < DUNGEON_Y - 2) {
         dest[dim_y]++;
       }
-      if (dest[dim_x] != 1) {
+      if (dest[dim_x] > 1) {
         dest[dim_x]--;
       }
       break;
     case '4':
     case 'h':
     case KEY_LEFT:
-      if (dest[dim_x] != DUNGEON_X - 1) {
+      if (dest[dim_x] > 1) {
         dest[dim_x]--;
       }
       break;
     }
-
+     io_display_no_fog(d);
     mvaddch(dest[dim_y] + 1, dest[dim_x], '*');
     refresh();
   }
@@ -503,7 +660,7 @@ uint32_t io_teleport_pc(dungeon *d)
   dijkstra_tunnel(d);
 
   io_display(d);
-
+  
   return 0;
 }
 
@@ -586,17 +743,16 @@ static void io_list_monsters_display(dungeon *d,
   mvprintw(5, 19, " %-40s ", "");
 
   for (i = 0; i < count; i++) {
-    snprintf(s[i], 40, "%16s%c: %2d %s by %2d %s",
-             (c[i]->symbol == 'd' ? "A tenacious " :
-              adjectives[rand() % (sizeof (adjectives) /
+    snprintf(s[i], 40, "%16s%s: %2d %s by %2d %s",
+	     (adjectives[rand() % (sizeof (adjectives) /
                                    sizeof (adjectives[0]))]),
-             c[i]->symbol,
+	     (((npc*)(c[i]))->name).c_str(),
              abs(c[i]->position[dim_y] - d->PC->position[dim_y]),
              ((c[i]->position[dim_y] - d->PC->position[dim_y]) <= 0 ?
               "North" : "South"),
              abs(c[i]->position[dim_x] - d->PC->position[dim_x]),
              ((c[i]->position[dim_x] - d->PC->position[dim_x]) <= 0 ?
-              "East" : "West"));
+	     "West" : "East"));
     if (count <= 13) {
       /* Handle the non-scrolling case right here. *
        * Scrolling in another function.            */

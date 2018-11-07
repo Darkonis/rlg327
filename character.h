@@ -1,11 +1,10 @@
 #ifndef CHARACTER_H
 # define CHARACTER_H
-#include <vector>
-//# include <String>
+
 # include <stdint.h>
-# include "dice.h"
+
 # include "dims.h"
-# include "dice.h"
+
 typedef enum kill_type {
   kill_direct,
   kill_avenged,
@@ -14,7 +13,6 @@ typedef enum kill_type {
 
 class character {
  public:
-  //monster_template[20];
   char symbol;
   pair_t position;
   int32_t speed;
@@ -28,16 +26,6 @@ class character {
    * characters have been created by the game.                              */
   uint32_t sequence_number;
   uint32_t kills[num_kill_types];
-  std::vector<std::string> color;
-  int health;
-  std::string description;
-  int attack;
-  int rarity;
-  std::vector<std::string> abilitys;//this can be made dynamic
-  int num_abilitys=-1;
-  std::string name;
-  character(char,int32_t,std::vector<std::string>,int,std::string,int,int,std::vector<std::string>,std::string);
-  character();
 };
 
 class dungeon;

@@ -4,13 +4,12 @@ ECHO = echo
 RM = rm -f
 
 CFLAGS = -Wall -Werror -ggdb3 -funroll-loops
-CXXFLAGS = -Wall -Werror -ggdb3 -funroll-loops -fstack-protector-all
+CXXFLAGS = -Wall -Werror -ggdb3 -funroll-loops
 LDFLAGS = -lncurses
 
 BIN = rlg327
 OBJS = rlg327.o heap.o dungeon.o path.o utils.o pc.o dice.o \
-       npc.o move.o event.o character.o io.o monster_template.o \
-	parser_monsters.o
+       npc.o move.o event.o character.o io.o descriptions.o item.o
 
 all: $(BIN) etags
 
@@ -40,4 +39,4 @@ clobber: clean
 
 etags:
 	@$(ECHO) Updating TAGS
-	@etags *.cpp *.h
+	@etags *.c *.cpp *.h

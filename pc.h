@@ -11,8 +11,6 @@ class pc : public character {
  public:
   terrain_type known_terrain[DUNGEON_Y][DUNGEON_X];
   uint8_t visible[DUNGEON_Y][DUNGEON_X];
-  pc();
-  //character::(char,int32_t,std::string,dice,std::string,dice,dice,std::string,std::string);
 };
 
 void pc_delete(pc *pc);

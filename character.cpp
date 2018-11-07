@@ -6,24 +6,6 @@
 #include "pc.h"
 #include "dungeon.h"
 
-character::character()
-{
-  return;
-}
-character::character(char symbol,int32_t speed,std::vector<std::string> color,int health,std::string description,int attack,int rarity,std::vector<std::string>abilitys,std::string name)
-{
-  this->symbol=symbol;
-  this->speed=speed;
-  this->color=color;
-  this->health =health;
-  this->description=description;
-  this->attack=attack;
-  this->rarity=rarity;
-  //this->abilitys=abilitys;//error point but not needed so shrug
-  this->name=name;
-  
-
-}
 void character_delete(character *c)
 {
   delete c;

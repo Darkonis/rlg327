@@ -22,28 +22,38 @@ static uint32_t max_monster_cells(dungeon *d)
 
   return sum;
 }
-/*npc::npc(char a,int32_t b,std::string c,int d,std::string e,int f,int g,std::string* h,std::string i)
-{
-  base.character(a,b,c,d,e,f,g,h,i);
-  }*/
-  npc::npc()
-{
-  return;
-}
+  
+                                                                                                                                       
 void gen_monsters(dungeon *d)
 {
   uint32_t i;
   npc *m;
   uint32_t room;
   pair_t p;
-  const static char symbol[] = "0123456789abcdef";
-
-  d->num_monsters = min(d->max_monsters, max_monster_cells(d));
+  //const static char symbol[] = "0123456789abcdef";
+  uint32_t num_cells;
+  m=new npc;
+  num_cells = max_monster_cells(d);
+  d->num_monsters = d->max_monsters < num_cells ? d->max_monsters : num_cells;
 
   for (i = 0; i < d->num_monsters; i++) {
-    m = new npc;
-    memset(m, 0, sizeof (*m));
-    
+    int flag=0;
+    while(!flag)
+      {
+	//std::cout<<d->monster_descriptions.size()<<'\n';
+	// getchar();
+	int mon_tar=rand()%d->monster_descriptions.size();
+	if(d->monster_descriptions[mon_tar].get_rarity()<(unsigned)rand()%100&& (!d->monster_descriptions[mon_tar].get_uniq()||!d->monster_descriptions[mon_tar].get_exists()))
+	  {
+	    
+	    flag=1;
+	    m=d->monster_descriptions[mon_tar].generate_monster();
+	    d->monster_descriptions[mon_tar].set_exists(1);
+	    // std::cout<<m<<'\n';
+	    //getchar();
+	    // memset(m, 0, sizeof (*m));
+	  }
+      }
     do {
       room = rand_range(1, d->num_rooms - 1);
       p[dim_y] = rand_range(d->rooms[room].position[dim_y],
@@ -56,12 +66,12 @@ void gen_monsters(dungeon *d)
     m->position[dim_y] = p[dim_y];
     m->position[dim_x] = p[dim_x];
     d->character_map[p[dim_y]][p[dim_x]] = m;
-    m->speed = rand_range(5, 20);
+    // m->speed = rand_range(5, 20);
     m->alive = 1;
     m->sequence_number = ++d->character_sequence_number;
-    m->characteristics = rand() & 0x0000000f;
+    //m->characteristics = rand() & 0x0000000f;
     /*    m->npc->characteristics = 0xf;*/
-    m->symbol = symbol[m->characteristics];
+    //m->symbol = symbol[m->characteristics];
     m->have_seen_pc = 0;
     m->kills[kill_direct] = m->kills[kill_avenged] = 0;
 

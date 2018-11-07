@@ -8,16 +8,7 @@
 #include "move.h"
 #include "path.h"
 #include "io.h"
-/*pc::character(char,int32_t,std::string,dice,std::string,dice,dice,std::string,std::string)
-{
 
-  base::character(char,int32_t,std::string,dice,std::string,dice,dice,std::string,std::string);
-}
-*/
-pc::pc()
-{
-  return;
-}
 uint32_t pc_is_alive(dungeon *d)
 {
   return d->PC->alive;

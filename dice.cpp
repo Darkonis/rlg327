@@ -1,84 +1,30 @@
+#include <cstdlib>
+
 #include "dice.h"
-#include <iostream>
-dice::dice()
-{
+#include "utils.h"
 
-}
-dice::dice(unsigned int sides,unsigned int dice,unsigned int base)
+int32_t dice::roll(void) const
 {
-  this->sides=sides;
-  num_dice=dice;
-  this->base=base;
-}
-dice::dice(unsigned int sides)
-{
-  this->sides=sides;
+  int32_t total;
+  uint32_t i;
+
+  total = base;
+
+  if (sides) {
+    for (i = 0; i < number; i++) {
+      total += rand_range(1, sides);
+    }
   }
-dice::dice(std::string s)
-{
-  std::size_t found = s.find("d");
-  if(found==std::string::npos)
-    {
-      std::cout<<s<<"\n";
-      std::cout<<"error parsing"<<"\n";
-      // return -1;
-    }
-  else
-    {
-      base = std::stoi(s.substr(0,s.find("+")));
-      num_dice = std::stoi(s.substr(s.find("+")+1,s.find("d")));
-      sides=std::stoi(s.substr(s.find("d")+1));
-      // std::cout<<base<<"+"<<num_dice<<"d"<<sides<<"\n";
-    }
 
+  return total;
 }
 
-//remove later if needed
+std::ostream &dice::print(std::ostream &o)
+{
+  return o << base << '+' << number << 'd' << sides;
+}
 
-int dice::roll()
+std::ostream &operator<<(std::ostream &o, dice &d)
 {
-  if(num_dice!=-1)
-    {
-      return-1;//error handling
-    }
-  int i=0;
-  int sum=0;
-  for(i=0;i<num_dice;i++)
-    {
-      sum+=rand()%sides+1;
-    }
-  return sum;
-}
-int dice::roll(unsigned num)
-{
-  unsigned int i;
-  int sum=0;
-  for(i=0;i<num;i++)
-    {
-      sum+=rand()%sides+1;
-    }
-  return sum;
-}
-int roll(unsigned num,unsigned sides)
-{
-  unsigned int i;
-  int sum=0;
-  for(i=0;i<num;i++)
-    {
-      sum+=rand()%sides+1;
-    }
-  return sum;
-}
-std::string dice::toString()
-{
-  std::string out = std::to_string( base);// + " + "+ num_dice+'d'+sides;
-  out+="+";
-  out+= std::to_string(num_dice);
-  out+= "d";
-  out+=std::to_string(sides);
-  out+= " Expected: ";
-    out+=std::to_string(base+num_dice*(.5*(sides+1)));
-  //std::cout<<base<<" + "<<num_dice<<" d "<<sides<<"\n"; 
-  //std::cout<<out<<"out\n";
-  return out;
+  return d.print(o);
 }

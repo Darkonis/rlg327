@@ -1,18 +1,16 @@
 #include <stdio.h>
-#include <iostream>
-#include <string>
+#include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-//#define _CRTDBG_MAP_ALLOC
+
 /* Very slow seed: 686846853 */
-//#include <crtdbg>
+
 #include "dungeon.h"
 #include "pc.h"
 #include "npc.h"
 #include "move.h"
 #include "io.h"
-#include "dice.h"
-#include "parser_monsters.h"
+#include "item.h"
 const char *victory =
   "\n                                       o\n"
   "                                      $\"\"$o\n"
@@ -87,8 +85,15 @@ int main(int argc, char *argv[])
   char *save_file;
   char *load_file;
   char *pgm_file;
-  /* Quiet a false positive from valgrind. */
+
   memset(&d, 0, sizeof (d));
+  parse_descriptions(&d);
+  //print_descriptions(&d);
+  // destroy_descriptions(&d);
+
+  // return 0;
+
+  /* Quiet a false positive from valgrind. */
   
   /* Default behavior: Seed with the time, generate a new dungeon, *
    * and don't write to disk.                                      */
@@ -96,21 +101,7 @@ int main(int argc, char *argv[])
   do_seed = 1;
   save_file = load_file = NULL;
   d.max_monsters = MAX_MONSTERS;
-  {
-  if(parse(&d)==-1)
-    {
-      exit(-1);
-    }
-  for(i=0;i<d.num_possible;i++)
-    {
-      d.valid_mon[i].print_template();
-      std::cout<<"\n";
-    }
-  }
-  delete_dungeon(&d);
-  //  _CrtDumpMemoryLeaks();
-  exit(0);
-  //print(&d);
+
   /* The project spec requires '--load' and '--save'.  It's common  *
    * to have short and long forms of most switches (assuming you    *
    * don't run out of letters).  For now, we've got plenty.  Long   *
@@ -216,7 +207,7 @@ int main(int argc, char *argv[])
 
   io_init_terminal();
   init_dungeon(&d);
-  
+
   if (do_load) {
     read_dungeon(&d, load_file);
   } else if (do_image) {
@@ -224,11 +215,11 @@ int main(int argc, char *argv[])
   } else {
     gen_dungeon(&d);
   }
-  //parse(&d,"/monsters/monster_desc.txt");
+
   /* Ignoring PC position in saved dungeons.  Not a bug. */
   config_pc(&d);
   gen_monsters(&d);
-
+  gen_items(&d);
   io_display(&d);
   if (!do_load && !do_image) {
     io_queue_message("Seed is %u.", seed);
@@ -276,7 +267,7 @@ int main(int argc, char *argv[])
      * delete_pc(), because it will lead to a double delete.               */
     character_delete(d.PC);
   }
-
+   destroy_descriptions(&d); 
   delete_dungeon(&d);
 
   return 0;
