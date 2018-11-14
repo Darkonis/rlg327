@@ -6,18 +6,11 @@
 # include "dims.h"
 # include "character.h"
 # include "dungeon.h"
-# include "object.h"
+
 class pc : public character {
  public:
-  ~pc() {}
   terrain_type known_terrain[DUNGEON_Y][DUNGEON_X];
   uint8_t visible[DUNGEON_Y][DUNGEON_X];
-  object *carry=NULL;
-  object *equip[12]={NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
-  int base_hp=500;
-  int base_speed=10;
-  int max_hp=500;
-  void adjust_stats();
 };
 
 void pc_delete(pc *pc);

@@ -1,16 +1,15 @@
 #ifndef DESCRIPTIONS_H
 # define DESCRIPTIONS_H
 
-# include <stdint.h>
-# undef swap
+# include <cstdint>
 # include <vector>
 # include <string>
+
 # include "dice.h"
 # include "npc.h"
-# include "item.h"
-//# include "item.h"
+
 typedef struct dungeon dungeon_t;
-class item;
+
 uint32_t parse_descriptions(dungeon_t *d);
 uint32_t print_descriptions(dungeon_t *d);
 uint32_t destroy_descriptions(dungeon_t *d);
@@ -33,13 +32,13 @@ typedef enum object_type {
   objtype_FLASK,
   objtype_GOLD,
   objtype_AMMUNITION,
-  objtype_FOOD, 
+  objtype_FOOD,
   objtype_WAND,
   objtype_CONTAINER
 } object_type_t;
-# include "item.h"
 
 extern const char object_symbol[];
+class npc;
 
 class monster_description {
  private:
@@ -49,12 +48,21 @@ class monster_description {
   uint32_t abilities;
   dice speed, hitpoints, damage;
   uint32_t rarity;
-  int exists=0;
+  uint32_t num_alive, num_killed;
+  inline bool can_be_generated()
+  {
+    return (((abilities & NPC_UNIQ) && !num_alive && !num_killed) ||
+            !(abilities & NPC_UNIQ));
+  }
+  inline bool pass_rarity_roll()
+  {
+    return rarity > (unsigned) (rand() % 100);
+  }
+
  public:
-  npc* generate_monster();
   monster_description() : name(),       description(), symbol(0),   color(0),
                           abilities(0), speed(),       hitpoints(), damage(),
-                          rarity(0)
+                          rarity(0), num_alive(0), num_killed(0)
   {
   }
   void set(const std::string &name,
@@ -68,10 +76,21 @@ class monster_description {
            const uint32_t rarity);
   std::ostream &print(std::ostream &o);
   char get_symbol() { return symbol; }
-  uint32_t get_rarity(){return rarity;}
-  int get_exists(){return exists;}
-  void set_exists(int i){exists=i;}
-  int get_uniq(){return abilities&NPC_UNIQ;}
+  static npc *generate_monster(dungeon_t *d);
+  inline void birth()
+  {
+    num_alive++;
+  }
+  inline void die()
+  {
+    num_killed++;
+    num_alive--;
+  }
+  inline void destroy()
+  {
+    num_alive--;
+  }
+  friend npc;
 };
 
 class object_description {
@@ -82,20 +101,25 @@ class object_description {
   dice hit, damage, dodge, defence, weight, speed, attribute, value;
   bool artifact;
   uint32_t rarity;
-  int exists=0;
-public:
+  uint32_t num_generated;
+  uint32_t num_found;
+ public:
   object_description() : name(),    description(), type(objtype_no_type),
                          color(0),  hit(),         damage(),
                          dodge(),   defence(),     weight(),
                          speed(),   attribute(),   value(),
-                         artifact(false), rarity(0)
+                         artifact(false), rarity(0), num_generated(0),
+                         num_found(0)
   {
   }
-  item* generate_item();
-  int get_exists(){return exists;}
-  uint32_t get_rarity(){return rarity;}
-  int get_artifact(){return artifact;}
-  void set_exists(int i){exists=i;}
+  inline bool can_be_generated()
+  {
+    return !artifact || (artifact && !num_generated && !num_found);
+  }
+  inline bool pass_rarity_roll()
+  {
+    return rarity > (unsigned) (rand() % 100);
+  }
   void set(const std::string &name,
            const std::string &description,
            const object_type_t type,
@@ -125,7 +149,9 @@ public:
   inline const dice &get_speed() const { return speed; }
   inline const dice &get_attribute() const { return attribute; }
   inline const dice &get_value() const { return value; }
-  
+  inline void generate() { num_generated++; }
+  inline void destroy() { num_generated--; }
+  inline void find() { num_found++; }
 };
 
 std::ostream &operator<<(std::ostream &o, monster_description &m);

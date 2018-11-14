@@ -14,8 +14,7 @@
 #include "path.h"
 #include "event.h"
 #include "io.h"
-#include "npc.h"
-#include <ncurses.h>
+
 void do_combat(dungeon *d, character *atk, character *def)
 {
   int can_see_atk, can_see_def;
@@ -61,19 +60,13 @@ void do_combat(dungeon *d, character *atk, character *def)
       d->num_monsters--;
     } else {
       if ((part = rand() % (sizeof (organs) / sizeof (organs[0]))) < 26) {
-        io_queue_message("As %s%s eats your %s,", is_unique(atk) ? "" : "the ",
-                         atk->name, organs[rand() % (sizeof (organs) /
-                                                     sizeof (organs[0]))]);
-        io_queue_message("   ...you wonder if there is an afterlife.");
-        /* Queue an empty message, otherwise the game will not pause for *
-         * player to see above.                                          */
-        io_queue_message("");
+        io_queue_message("As the %c eats your %s, "
+                         "you wonder if there is an afterlife.",
+                         atk->symbol, organs[part]);
       } else {
         io_queue_message("Your last thoughts fade away as "
-                         "%s%s eats your %s...",
-                         is_unique(atk) ? "" : "the ",
-                         atk->name, organs[part]);
-        io_queue_message("");
+                         "the %c eats your %s...",
+                         atk->symbol, organs[part]);
       }
       /* Queue an empty message, otherwise the game will not pause for *
        * player to see above.                                          */
@@ -85,7 +78,7 @@ void do_combat(dungeon *d, character *atk, character *def)
   }
 
   if (atk == d->PC) {
-    io_queue_message("You smite %s%s!", is_unique(def) ? "" : "the ", def->name);
+    io_queue_message("You smite the %c!", def->symbol);
   }
 
   can_see_atk = can_see(d, character_get_pos(d->PC),
@@ -95,19 +88,15 @@ void do_combat(dungeon *d, character *atk, character *def)
 
   if (atk != d->PC && def != d->PC) {
     if (can_see_atk && !can_see_def) {
-      io_queue_message("%s%s callously murders some poor, "
-                       "defenseless creature.",
-                       is_unique(atk) ? "" : "The ", atk->name);
+      io_queue_message("The %c callously murders some poor, "
+                       "defenseless creature.", atk->symbol);
     }
     if (can_see_def && !can_see_atk) {
-      io_queue_message("Something kills %s%s.",
-                       is_unique(def) ? "" : "the helpless ", def->name);
+      io_queue_message("Something kills the helpless %c.", def->symbol);
     }
     if (can_see_atk && can_see_def) {
-      io_queue_message("You watch in abject horror as %s%s "
-                       "gruesomely murders %s%s!",
-                       is_unique(atk) ? "" : "the ", atk->name,
-                       is_unique(def) ? "" : "the ", def->name);
+      io_queue_message("You watch in abject horror as the %c "
+                       "gruesomely murders the %c!", atk->symbol, def->symbol);
     }
   }
 }
@@ -149,7 +138,7 @@ void do_moves(dungeon *d)
      * We generate one manually so that we can set the PC sequence       *
      * number to zero.                                                   */
     e = (event *) malloc(sizeof (*e));
-    e->type = event_character_turn;
+    e->type = event_characterurn;
     /* Hack: New dungeons are marked.  Unmark and ensure PC goes at d->time, *
      * otherwise, monsters get a turn before the PC.                         */
     if (d->is_new) {
@@ -165,9 +154,9 @@ void do_moves(dungeon *d)
 
   while (pc_is_alive(d) &&
          (e = (event *) heap_remove_min(&d->events)) &&
-         ((e->type != event_character_turn) || (e->c != d->PC))) {
+         ((e->type != event_characterurn) || (e->c != d->PC))) {
     d->time = e->time;
-    if (e->type == event_character_turn) {
+    if (e->type == event_characterurn) {
       c = e->c;
     }
     if (!c->alive) {
@@ -256,48 +245,7 @@ static void new_dungeon_level(dungeon *d, uint32_t dir)
   }
 }
 
-void pickup_objects(dungeon* d,pair_t next)
-{
-  int num=0;
- if(objpair(next))
-   {
-     object *inv=d->PC->carry;
-     object *floor =objpair(next);
-        if(!d->PC->carry)
-          {
-            d->PC->carry=floor;
-          }
-	else
-	  {
-	    while(inv->get_next())
-	      {
-		inv=inv->get_next();
-	      }
-	    inv->set_next(floor);
-	  }
-	inv=d->PC->carry;
-	object *tar;
-	while(inv->get_next()&&num<9)
-	  {
-	    inv=inv->get_next();
-	    num++;
-	  }
-	tar=inv;
-	floor =objpair(next);
-	while(floor&&floor!=tar)
-	  {
-	   floor=floor->get_next();
-	  }
-	if(floor)
-	  {
-	objpair(next)=floor->get_next();
-	  }
-	tar->set_next(NULL);
-	inv->set_next(NULL);
-      
-    
-   }
-}
+
 uint32_t move_pc(dungeon *d, uint32_t dir)
 {
   pair_t next;
@@ -360,16 +308,16 @@ uint32_t move_pc(dungeon *d, uint32_t dir)
     }
     break;
   }
-  pickup_objects(d,next);
+
   if (was_stairs) {
     return 0;
   }
 
   if ((dir != '>') && (dir != '<') && (mappair(next) >= ter_floor)) {
-	     move_character(d, d->PC, next);
+    move_character(d, d->PC, next);
     dijkstra(d);
     dijkstra_tunnel(d);
-    
+
     return 0;
   } else if (mappair(next) < ter_floor) {
     io_queue_message(wallmsg[rand() % (sizeof (wallmsg) /

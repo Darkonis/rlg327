@@ -1,6 +1,6 @@
-#include <cstdlib>
-#include <ncurses.h>
-#include <cstring>
+#include <stdlib.h>
+
+#include "string.h"
 
 #include "dungeon.h"
 #include "pc.h"
@@ -8,27 +8,7 @@
 #include "move.h"
 #include "path.h"
 #include "io.h"
-#include "object.h"
-/*
-determine the players new stats
- */
-void pc::adjust_stats()
-{
-  int i;
-  //int last_max=max_hp;
-  //max_hp=base_hp;
-  speed=base_speed;
-  //int damage=0;//NOTE do not do dmg here do a running total in combat
-  for(i=1;i<13;i++ )
-    {
-      if(equip[i-1])
-	{
-	  //max_hp+=equip[i]->get_hit();
-	  speed+=equip[i-1]->get_speed();
-	}
-    }
-  //hp+=max_hp-last_max;//adjust the players hp for the change in their maximum
-}
+
 uint32_t pc_is_alive(dungeon *d)
 {
   return d->PC->alive;
@@ -49,10 +29,9 @@ void place_pc(dungeon *d)
 
 void config_pc(dungeon *d)
 {
-  static dice pc_dice(0, 1, 4);
-
   d->PC = new pc;
 
+  memset(d->PC, 0, sizeof (*d->PC));
   d->PC->symbol = '@';
 
   place_pc(d);
@@ -61,11 +40,8 @@ void config_pc(dungeon *d)
   d->PC->alive = 1;
   d->PC->sequence_number = 0;
   d->PC->kills[kill_direct] = d->PC->kills[kill_avenged] = 0;
-  d->PC->color.push_back(COLOR_WHITE);
-  d->PC->damage = &pc_dice;
-  d->PC->name = "Isabella Garcia-Shapiro";
 
-  d->character_map[character_get_y(d->PC)][character_get_x(d->PC)] = d->PC;
+  d->character_map[d->PC->position[dim_y]][d->PC->position[dim_x]] = d->PC;
 
   dijkstra(d);
   dijkstra_tunnel(d);
@@ -262,11 +238,4 @@ void pc_observe_terrain(pc *p, dungeon *d)
 int32_t is_illuminated(pc *p, int16_t y, int16_t x)
 {
   return p->visible[y][x];
-}
-
-void pc_see_object(character *the_pc, object *o)
-{
-  if (o) {
-    o->has_been_seen();
-  }
 }

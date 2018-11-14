@@ -1,0 +1,546 @@
+==23628== Memcheck, a memory error detector
+==23628== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==23628== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==23628== Command: ./rlg327
+==23628== Parent PID: 16828
+==23628== 
+--23628-- 
+--23628-- Valgrind options:
+--23628--    -v
+--23628--    --track-origins=yes
+--23628--    --show-leak-kinds=all
+--23628--    --leak-check=full
+--23628--    --log-file=valgrind.log
+--23628-- Contents of /proc/version:
+--23628--   Linux version 4.15.0-38-generic (buildd@lcy01-amd64-023) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #41-Ubuntu SMP Wed Oct 10 10:59:38 UTC 2018
+--23628-- 
+--23628-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-avx-avx2-bmi
+--23628-- Page sizes: currently 4096, max supported 4096
+--23628-- Valgrind library directory: /usr/lib/valgrind
+--23628-- Reading syms from /home/darron/cs327/rlg327
+--23628-- Reading syms from /lib/x86_64-linux-gnu/ld-2.27.so
+--23628--   Considering /lib/x86_64-linux-gnu/ld-2.27.so ..
+--23628--   .. CRC mismatch (computed 1b7c895e wanted 2943108a)
+--23628--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.27.so ..
+--23628--   .. CRC is valid
+--23628-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+--23628--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--23628--   .. CRC mismatch (computed 62965bbf wanted eeb84137)
+--23628--    object doesn't have a symbol table
+--23628--    object doesn't have a dynamic symbol table
+--23628-- Scheduler: using generic scheduler lock implementation.
+--23628-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==23628== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-23628-by-darron-on-???
+==23628== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-23628-by-darron-on-???
+==23628== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-23628-by-darron-on-???
+==23628== 
+==23628== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==23628== don't want to do, unless you know exactly what you're doing,
+==23628== or are doing some strange experiment):
+==23628==   /usr/lib/valgrind/../../bin/vgdb --pid=23628 ...command...
+==23628== 
+==23628== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==23628==   /path/to/gdb ./rlg327
+==23628== and then give GDB the following command
+==23628==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=23628
+==23628== --pid is optional if only one valgrind process is running
+==23628== 
+--23628-- REDIR: 0x401f2f0 (ld-linux-x86-64.so.2:strlen) redirected to 0x58060901 (???)
+--23628-- REDIR: 0x401f0d0 (ld-linux-x86-64.so.2:index) redirected to 0x5806091b (???)
+--23628-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--23628--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--23628--   .. CRC mismatch (computed 13d5e98a wanted 1786ecf1)
+--23628--    object doesn't have a symbol table
+--23628-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+--23628--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--23628--   .. CRC mismatch (computed 8f77ef36 wanted fcbde737)
+--23628--    object doesn't have a symbol table
+==23628== WARNING: new redirection conflicts with existing -- ignoring it
+--23628--     old: 0x0401f2f0 (strlen              ) R-> (0000.0) 0x58060901 ???
+--23628--     new: 0x0401f2f0 (strlen              ) R-> (2007.0) 0x04c32db0 strlen
+--23628-- REDIR: 0x401d360 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4c33ee0 (strcmp)
+--23628-- REDIR: 0x401f830 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4c374f0 (mempcpy)
+--23628-- Reading syms from /lib/x86_64-linux-gnu/libncurses.so.5.9
+--23628--    object doesn't have a symbol table
+--23628-- Reading syms from /lib/x86_64-linux-gnu/libtinfo.so.5.9
+--23628--    object doesn't have a symbol table
+--23628-- Reading syms from /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25
+--23628--    object doesn't have a symbol table
+--23628-- Reading syms from /lib/x86_64-linux-gnu/libgcc_s.so.1
+--23628--    object doesn't have a symbol table
+--23628-- Reading syms from /lib/x86_64-linux-gnu/libc-2.27.so
+--23628--   Considering /lib/x86_64-linux-gnu/libc-2.27.so ..
+--23628--   .. CRC mismatch (computed b1c74187 wanted 042cc048)
+--23628--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.27.so ..
+--23628--   .. CRC is valid
+--23628-- Reading syms from /lib/x86_64-linux-gnu/libdl-2.27.so
+--23628--   Considering /lib/x86_64-linux-gnu/libdl-2.27.so ..
+--23628--   .. CRC mismatch (computed bd82fa02 wanted d1fdccc9)
+--23628--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libdl-2.27.so ..
+--23628--   .. CRC is valid
+--23628-- Reading syms from /lib/x86_64-linux-gnu/libm-2.27.so
+--23628--   Considering /lib/x86_64-linux-gnu/libm-2.27.so ..
+--23628--   .. CRC mismatch (computed 7feae033 wanted b29b2508)
+--23628--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.27.so ..
+--23628--   .. CRC is valid
+--23628-- REDIR: 0x58c8c70 (libc.so.6:memmove) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7d40 (libc.so.6:strncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8f50 (libc.so.6:strcasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7790 (libc.so.6:strcat) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7d70 (libc.so.6:rindex) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58ca7c0 (libc.so.6:rawmemchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8de0 (libc.so.6:mempcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8c10 (libc.so.6:bcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7d00 (libc.so.6:strncmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7800 (libc.so.6:strcmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8d40 (libc.so.6:memset) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58e60f0 (libc.so.6:wcschr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7ca0 (libc.so.6:strnlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7870 (libc.so.6:strcspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8fa0 (libc.so.6:strncasecmp) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7840 (libc.so.6:strcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c90e0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7da0 (libc.so.6:strpbrk) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c77c0 (libc.so.6:index) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7c70 (libc.so.6:strlen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58d26c0 (libc.so.6:memrchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8ff0 (libc.so.6:strcasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8be0 (libc.so.6:memchr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58e6eb0 (libc.so.6:wcslen) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8050 (libc.so.6:strspn) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8f20 (libc.so.6:stpncpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8ef0 (libc.so.6:stpcpy) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58ca7f0 (libc.so.6:strchrnul) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c9040 (libc.so.6:strncasecmp_l) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c7cd0 (libc.so.6:strncat) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x595b8a0 (libc.so.6:__memcpy_chk) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x58c8b20 (libc.so.6:strstr) redirected to 0x4a2a6e0 (_vgnU_ifunc_wrapper)
+--23628-- REDIR: 0x59b83c0 (libc.so.6:__strrchr_avx2) redirected to 0x4c32730 (rindex)
+--23628-- REDIR: 0x58c1070 (libc.so.6:malloc) redirected to 0x4c2faa0 (malloc)
+--23628-- REDIR: 0x59b8590 (libc.so.6:__strlen_avx2) redirected to 0x4c32cf0 (strlen)
+--23628-- REDIR: 0x59b4ba0 (libc.so.6:__memcmp_avx2_movbe) redirected to 0x4c35e00 (bcmp)
+--23628-- REDIR: 0x5993d60 (libc.so.6:__strcmp_ssse3) redirected to 0x4c33da0 (strcmp)
+--23628-- REDIR: 0x59b8f50 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x4c365d0 (memset)
+--23628-- REDIR: 0x59af510 (libc.so.6:__strncmp_sse42) redirected to 0x4c33570 (__strncmp_sse42)
+--23628-- REDIR: 0x59b8ad0 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x4c366e0 (memmove)
+--23628-- REDIR: 0x531c190 (libstdc++.so.6:operator new(unsigned long)) redirected to 0x4c30110 (operator new(unsigned long))
+--23628-- REDIR: 0x531a2e0 (libstdc++.so.6:operator delete(void*)) redirected to 0x4c311d0 (operator delete(void*))
+--23628-- REDIR: 0x58c8590 (libc.so.6:__GI_strstr) redirected to 0x4c37760 (__strstr_sse2)
+--23628-- REDIR: 0x531c240 (libstdc++.so.6:operator new[](unsigned long)) redirected to 0x4c30830 (operator new[](unsigned long))
+--23628-- REDIR: 0x59b4420 (libc.so.6:__memchr_avx2) redirected to 0x4c33f80 (memchr)
+--23628-- REDIR: 0x59b46f0 (libc.so.6:__rawmemchr_avx2) redirected to 0x4c37050 (rawmemchr)
+--23628-- REDIR: 0x531a310 (libstdc++.so.6:operator delete[](void*)) redirected to 0x4c316d0 (operator delete[](void*))
+--23628-- REDIR: 0x58c1950 (libc.so.6:free) redirected to 0x4c30cd0 (free)
+--23628-- REDIR: 0x58c4030 (libc.so.6:calloc) redirected to 0x4c31a70 (calloc)
+--23628-- REDIR: 0x59b81d0 (libc.so.6:__strchrnul_avx2) redirected to 0x4c37020 (strchrnul)
+--23628-- REDIR: 0x59b8720 (libc.so.6:__strnlen_avx2) redirected to 0x4c32c90 (strnlen)
+--23628-- REDIR: 0x59b7fa0 (libc.so.6:__strchr_avx2) redirected to 0x4c32950 (index)
+--23628-- REDIR: 0x59a5950 (libc.so.6:__strcpy_ssse3) redirected to 0x4c32dd0 (strcpy)
+--23628-- REDIR: 0x59b8ac0 (libc.so.6:__memcpy_chk_avx_unaligned_erms) redirected to 0x4c375e0 (__memcpy_chk)
+--23628-- REDIR: 0x58c2c30 (libc.so.6:realloc) redirected to 0x4c31cb0 (realloc)
+--23628-- REDIR: 0x59a7100 (libc.so.6:__strncpy_ssse3) redirected to 0x4c32fb0 (strncpy)
+--23628-- REDIR: 0x59b8ab0 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x4c37130 (mempcpy)
+==23628== 
+==23628== HEAP SUMMARY:
+==23628==     in use at exit: 78,217 bytes in 366 blocks
+==23628==   total heap usage: 61,759 allocs, 61,393 frees, 1,851,638 bytes allocated
+==23628== 
+==23628== Searching for pointers to 366 not-freed blocks
+==23628== Checked 336,296 bytes
+==23628== 
+==23628== 8 bytes in 1 blocks are still reachable in loss record 1 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4F2C5: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 13 bytes in 1 blocks are still reachable in loss record 2 of 40
+==23628==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x58C79B9: strdup (strdup.c:42)
+==23628==    by 0x506DAC9: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506DDBC: _nc_first_db (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767AD: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 15 bytes in 1 blocks are still reachable in loss record 3 of 40
+==23628==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x58C79B9: strdup (strdup.c:42)
+==23628==    by 0x507060D: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 24 bytes in 1 blocks are still reachable in loss record 4 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506BEC4: _nc_add_to_try (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506E675: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506F7B3: _nc_keypad (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x11BB8C: io_init_terminal() (io.cpp:30)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 25 bytes in 1 blocks are still reachable in loss record 5 of 40
+==23628==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506E5B4: _nc_home_terminfo (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506DDA6: _nc_first_db (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767AD: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 46 bytes in 1 blocks are still reachable in loss record 6 of 40
+==23628==    at 0x4C31D2F: realloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506E292: _nc_doalloc (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5075E66: _nc_read_termtype (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50762FC: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50764E6: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767D0: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 48 bytes in 1 blocks are still reachable in loss record 7 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506DEBB: _nc_first_db (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767AD: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 60 bytes in 12 blocks are definitely lost in loss record 8 of 40
+==23628==    at 0x4C3017F: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x1264B5: __gnu_cxx::new_allocator<unsigned int>::allocate(unsigned long, void const*) (new_allocator.h:111)
+==23628==    by 0x125F40: std::allocator_traits<std::allocator<unsigned int> >::allocate(std::allocator<unsigned int>&, unsigned long) (alloc_traits.h:436)
+==23628==    by 0x125479: std::_Vector_base<unsigned int, std::allocator<unsigned int> >::_M_allocate(unsigned long) (stl_vector.h:172)
+==23628==    by 0x124FF9: unsigned int* std::vector<unsigned int, std::allocator<unsigned int> >::_M_allocate_and_copy<__gnu_cxx::__normal_iterator<unsigned int const*, std::vector<unsigned int, std::allocator<unsigned int> > > >(unsigned long, __gnu_cxx::__normal_iterator<unsigned int const*, std::vector<unsigned int, std::allocator<unsigned int> > >, __gnu_cxx::__normal_iterator<unsigned int const*, std::vector<unsigned int, std::allocator<unsigned int> > >) (stl_vector.h:1260)
+==23628==    by 0x124188: std::vector<unsigned int, std::allocator<unsigned int> >::operator=(std::vector<unsigned int, std::allocator<unsigned int> > const&) (vector.tcc:206)
+==23628==    by 0x1234E8: monster_description::generate_monster() (descriptions.cpp:1068)
+==23628==    by 0x117D00: gen_monsters(dungeon*) (npc.cpp:50)
+==23628==    by 0x10C01D: main (rlg327.cpp:221)
+==23628== 
+==23628== 66 bytes in 1 blocks are still reachable in loss record 9 of 40
+==23628==    at 0x4C31D2F: realloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506E292: _nc_doalloc (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5072E63: tparm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4BFD2: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C8B4: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 78 bytes in 1 blocks are still reachable in loss record 10 of 40
+==23628==    at 0x4C31D2F: realloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506E292: _nc_doalloc (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5075E97: _nc_read_termtype (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50762FC: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50764E6: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767D0: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 94 bytes in 1 blocks are still reachable in loss record 11 of 40
+==23628==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506DE23: _nc_first_db (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767AD: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 103 bytes in 1 blocks are still reachable in loss record 12 of 40
+==23628==    at 0x4C31D2F: realloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506E292: _nc_doalloc (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50717F3: _nc_tparm_analyze (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5071B4D: tparm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E44FB3: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E461A7: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E56671: doupdate (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4E0F7: wrefresh (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11D793: io_display(dungeon*) (io.cpp:418)
+==23628==    by 0x10C02C: main (rlg327.cpp:223)
+==23628== 
+==23628== 112 bytes in 1 blocks are still reachable in loss record 13 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4CD78: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4CF90: newwin (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4F6C6: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 112 bytes in 1 blocks are still reachable in loss record 14 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4CD78: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4CF90: newwin (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4F6E7: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 112 bytes in 1 blocks are still reachable in loss record 15 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4CD78: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4CF90: newwin (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4F791: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 128 bytes in 1 blocks are still reachable in loss record 16 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4F292: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 152 bytes in 1 blocks are definitely lost in loss record 17 of 40
+==23628==    at 0x4C3017F: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x117BB9: gen_monsters(dungeon*) (npc.cpp:35)
+==23628==    by 0x10C01D: main (rlg327.cpp:221)
+==23628== 
+==23628== 177 bytes in 12 blocks are definitely lost in loss record 18 of 40
+==23628==    at 0x4C3017F: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x53ADC36: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_assign(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25)
+==23628==    by 0x53ADF88: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator=(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25)
+==23628==    by 0x1234A4: monster_description::generate_monster() (descriptions.cpp:1065)
+==23628==    by 0x117D00: gen_monsters(dungeon*) (npc.cpp:50)
+==23628==    by 0x10C01D: main (rlg327.cpp:221)
+==23628== 
+==23628== 208 bytes in 1 blocks are still reachable in loss record 19 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x50705BA: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 256 bytes in 1 blocks are still reachable in loss record 20 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E452DB: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E453DC: start_color (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB91: io_init_terminal() (io.cpp:31)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 384 bytes in 1 blocks are still reachable in loss record 21 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4CD96: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4CF90: newwin (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4F6C6: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 384 bytes in 1 blocks are still reachable in loss record 22 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4CD96: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4CF90: newwin (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4F6E7: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 384 bytes in 1 blocks are still reachable in loss record 23 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4CD96: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4CF90: newwin (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4F791: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 504 bytes in 21 blocks are still reachable in loss record 24 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506BDFB: _nc_add_to_try (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506E727: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506F7B3: _nc_keypad (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x11BB8C: io_init_terminal() (io.cpp:30)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 528 bytes in 1 blocks are still reachable in loss record 25 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x5076095: _nc_read_termtype (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50762FC: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50764E6: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767D0: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 771 bytes in 1 blocks are still reachable in loss record 26 of 40
+==23628==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x5076188: _nc_read_termtype (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50762FC: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50764E6: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767D0: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 1,024 bytes in 1 blocks are still reachable in loss record 27 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4F273: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 1,200 bytes in 50 blocks are still reachable in loss record 28 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506BE55: _nc_add_to_try (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506E727: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506F7B3: _nc_keypad (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x11BB8C: io_init_terminal() (io.cpp:30)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 1,576 bytes in 1 blocks are still reachable in loss record 29 of 40
+==23628==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x507575A: _nc_read_termtype (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50762FC: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50764E6: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767D0: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 1,672 bytes in 1 blocks are still reachable in loss record 30 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4F24E: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 1,680 bytes in 70 blocks are still reachable in loss record 31 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506BDFB: _nc_add_to_try (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506E675: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506F7B3: _nc_keypad (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x11BB8C: io_init_terminal() (io.cpp:30)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 1,945 bytes in 1 blocks are still reachable in loss record 32 of 40
+==23628==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E523EF: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4D9EE: vwprintw (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4DC51: mvprintw (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11D59B: io_display(dungeon*) (io.cpp:394)
+==23628==    by 0x10C02C: main (rlg327.cpp:223)
+==23628== 
+==23628== 2,088 bytes in 87 blocks are still reachable in loss record 33 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506BE55: _nc_add_to_try (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506E675: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x506F7B3: _nc_keypad (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x11BB8C: io_init_terminal() (io.cpp:30)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 2,236 bytes in 1 blocks are still reachable in loss record 34 of 40
+==23628==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4F3F0: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 2,932 bytes in 12 blocks are definitely lost in loss record 35 of 40
+==23628==    at 0x4C3017F: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x53ADC36: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_assign(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25)
+==23628==    by 0x53ADF88: std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::operator=(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.25)
+==23628==    by 0x1234BF: monster_description::generate_monster() (descriptions.cpp:1066)
+==23628==    by 0x117D00: gen_monsters(dungeon*) (npc.cpp:50)
+==23628==    by 0x10C01D: main (rlg327.cpp:221)
+==23628== 
+==23628== 3,824 bytes in 1 blocks are still reachable in loss record 36 of 40
+==23628==    at 0x4C31D2F: realloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x506E292: _nc_doalloc (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5075EB5: _nc_read_termtype (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50762FC: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50764E6: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50767D0: _nc_read_entry (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x5070288: ??? (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x50705D1: _nc_setupterm (in /lib/x86_64-linux-gnu/libtinfo.so.5.9)
+==23628==    by 0x4E4C6D7: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 7,168 bytes in 1 blocks are still reachable in loss record 37 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E455F1: start_color (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB91: io_init_terminal() (io.cpp:31)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 15,360 bytes in 24 blocks are still reachable in loss record 38 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4CFCC: newwin (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4F6C6: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 15,360 bytes in 24 blocks are still reachable in loss record 39 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4CFCC: newwin (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4F6E7: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== 15,360 bytes in 24 blocks are still reachable in loss record 40 of 40
+==23628==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==23628==    by 0x4E4CFCC: newwin (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4F791: ??? (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E4C71A: newterm (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x4E48FF2: initscr (in /lib/x86_64-linux-gnu/libncurses.so.5.9)
+==23628==    by 0x11BB64: io_init_terminal() (io.cpp:26)
+==23628==    by 0x10BF99: main (rlg327.cpp:208)
+==23628== 
+==23628== LEAK SUMMARY:
+==23628==    definitely lost: 3,321 bytes in 37 blocks
+==23628==    indirectly lost: 0 bytes in 0 blocks
+==23628==      possibly lost: 0 bytes in 0 blocks
+==23628==    still reachable: 74,896 bytes in 329 blocks
+==23628==         suppressed: 0 bytes in 0 blocks
+==23628== 
+==23628== ERROR SUMMARY: 4 errors from 4 contexts (suppressed: 0 from 0)
+==23628== ERROR SUMMARY: 4 errors from 4 contexts (suppressed: 0 from 0)

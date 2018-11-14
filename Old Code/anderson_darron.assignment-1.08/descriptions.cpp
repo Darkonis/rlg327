@@ -15,7 +15,6 @@
 #include "dice.h"
 #include "character.h"
 #include "utils.h"
-#include "event.h"
 
 #define MONSTER_FILE_SEMANTIC          "RLG327 MONSTER DESCRIPTION"
 #define MONSTER_FILE_VERSION           1U
@@ -95,7 +94,7 @@ static const struct {
   { 0, objtype_no_type }
 };
 
-const char object_symbol[] = {
+extern const char object_symbol[] = {
   '*', /* objtype_no_type */
   '|', /* objtype_WEAPON */
   ')', /* objtype_OFFHAND */
@@ -1058,27 +1057,61 @@ return o << hit << std::endl << damage << std::endl << dodge << std::endl
          << attribute << std::endl << value << std::endl << artifact
          << std::endl << rarity << std::endl;
 }
+npc* monster_description::generate_monster()
+{
+  npc* m=new npc;
+   memset(m, 0, sizeof (*m));
+  // memset(mon, 0, sizeof (*mon));
+  m->name=name;
+  m->description =description;
+  m->symbol=symbol;
+  m->color=color;
+  m->abilities=abilities;
+  m->speed = speed.roll();
+  m->hitpoints=hitpoints.roll();
+  m->damage=damage;
+  if((abilities&0x100)==1 )
+    {
+      exists=1;
+    }
+  else
+    {
+      exists=0;
+    }
+      return m;
+    
+}
+item* object_description::generate_item()
+{
+  item* i=new item;
+   memset(i, 0, sizeof (*i));
+  // memset(mon, 0, sizeof (*mon));                                                                                                                                                                         
+  i->name=name;
+  i->description =description;
+  // i->type=type;
+  i->symbol=object_symbol[type];
+  i->color=color;
+  i->hit=hit.roll();
+  i->dodge = dodge.roll();
+  i->weight=weight.roll();
+  i->speed=speed.roll();
+  i->attribute=attribute.roll();
+  i->value=value.roll();
+  i->damage=damage;
+  i->artifact=artifact;
+  if(artifact )
+    {
+      exists=1;
+    }
+  else
+    {
+      exists=0;
+    }
+      return i;
+
+}
 
 std::ostream &operator<<(std::ostream &o, object_description &od)
 {
   return od.print(o);
-}
-
-npc *monster_description::generate_monster(dungeon *d)
-{
-  npc *n;
-  std::vector<monster_description> &v = d->monster_descriptions;
-  uint32_t i;
-
-  while (!v[(i = (rand() % v.size()))].can_be_generated() ||
-         !v[i].pass_rarity_roll())
-    ;
-
-  monster_description &m = v[i];
-
-  n = new npc(d, m);
-
-  heap_insert(&d->events, new_event(d, event_character_turn, n, 0));
-
-  return n;
 }

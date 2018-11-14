@@ -70,6 +70,8 @@ class monster_description {
   char get_symbol() { return symbol; }
   uint32_t get_rarity(){return rarity;}
   int get_exists(){return exists;}
+  void set_exists(int i){exists=i;}
+  int get_uniq(){return abilities&NPC_UNIQ;}
 };
 
 class object_description {
@@ -93,7 +95,7 @@ public:
   int get_exists(){return exists;}
   uint32_t get_rarity(){return rarity;}
   int get_artifact(){return artifact;}
-
+  void set_exists(int i){exists=i;}
   void set(const std::string &name,
            const std::string &description,
            const object_type_t type,
