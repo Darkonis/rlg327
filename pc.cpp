@@ -17,14 +17,14 @@ void pc::adjust_stats()
   int i;
   //int last_max=max_hp;
   //max_hp=base_hp;
-  speed=base_speed;
+  speed=10;
   //int damage=0;//NOTE do not do dmg here do a running total in combat
-  for(i=1;i<13;i++ )
+  for(i=0;i<12;i++ )
     {
-      if(equip[i-1])
+      if(equip[i])
 	{
 	  //max_hp+=equip[i]->get_hit();
-	  speed+=equip[i-1]->get_speed();
+	  speed+=equip[i]->get_speed();
 	}
     }
   //hp+=max_hp-last_max;//adjust the players hp for the change in their maximum
@@ -64,7 +64,7 @@ void config_pc(dungeon *d)
   d->PC->color.push_back(COLOR_WHITE);
   d->PC->damage = &pc_dice;
   d->PC->name = "Isabella Garcia-Shapiro";
-
+  d->PC->hp=500;
   d->character_map[character_get_y(d->PC)][character_get_x(d->PC)] = d->PC;
 
   dijkstra(d);

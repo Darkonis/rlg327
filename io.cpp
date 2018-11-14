@@ -1298,7 +1298,7 @@ void io_select_monster(dungeon *d)
     }
 }
 void io_handle_input(dungeon *d)
-{
+{ d->PC->adjust_stats();
   uint32_t fail_code;
   int key;
   fd_set readfs;

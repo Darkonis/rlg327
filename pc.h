@@ -16,7 +16,8 @@ class pc : public character {
   object *equip[12]={NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
   int base_hp=500;
   int base_speed=10;
-  int max_hp=500;
+  //int max_hp=500;
+  int has_won=0;
   void adjust_stats();
 };
 
