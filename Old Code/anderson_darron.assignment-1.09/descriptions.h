@@ -8,9 +8,11 @@
 # include "dice.h"
 # include "npc.h"
 
-uint32_t parse_descriptions(dungeon *d);
-uint32_t print_descriptions(dungeon *d);
-uint32_t destroy_descriptions(dungeon *d);
+typedef struct dungeon dungeon_t;
+
+uint32_t parse_descriptions(dungeon_t *d);
+uint32_t print_descriptions(dungeon_t *d);
+uint32_t destroy_descriptions(dungeon_t *d);
 
 typedef enum object_type {
   objtype_no_type,
@@ -74,7 +76,7 @@ class monster_description {
            const uint32_t rarity);
   std::ostream &print(std::ostream &o);
   char get_symbol() { return symbol; }
-  static npc *generate_monster(dungeon *d);
+  static npc *generate_monster(dungeon_t *d);
   inline void birth()
   {
     num_alive++;
@@ -89,7 +91,6 @@ class monster_description {
     num_alive--;
   }
   friend npc;
-  friend bool boss_is_alive(dungeon *d);
 };
 
 class object_description {

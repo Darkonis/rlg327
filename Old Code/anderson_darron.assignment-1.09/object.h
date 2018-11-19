@@ -36,26 +36,19 @@ class object {
   char get_symbol();
   uint32_t get_color();
   const char *get_name();
+  const char *get_description();
   int32_t get_speed();
   int32_t roll_dice();
   int32_t get_type();
   bool have_seen() { return seen; }
+  object* get_next();
+  void set_next(object* in){next=in;}
   void has_been_seen() { seen = true; }
   int16_t *get_position() { return position; }
-  void pick_up() { od.find(); }
-  uint32_t is_equipable();
-  uint32_t is_removable();
-  uint32_t is_dropable();
-  uint32_t is_destructable();
-  int32_t get_eq_slot_index();
-  void to_pile(dungeon *d, pair_t location);
-  inline object *get_next() { return next; }
-  inline void set_next(object *n) { next = n; }
-  const char *get_description() { return description.c_str(); }
 };
 
-void gen_objects(dungeon *d);
+void gen_objects(dungeon_t *d);
 char object_get_symbol(object *o);
-void destroy_objects(dungeon *d);
+void destroy_objects(dungeon_t *d);
 
 #endif

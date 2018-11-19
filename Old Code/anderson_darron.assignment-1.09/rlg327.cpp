@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
   if (!do_load && !do_image) {
     io_queue_message("Seed is %u.", seed);
   }
-  while (pc_is_alive(&d) && boss_is_alive(&d) && !d.quit) {
+  while (pc_is_alive(&d) && !d.PC->has_won && !d.quit) {
     do_moves(&d);
   }
   io_display(&d);
@@ -265,13 +265,13 @@ int main(int argc, char *argv[])
          "peaceful dungeon residents.\n",
          d.PC->kills[kill_direct], d.PC->kills[kill_avenged]);
 
+  if(d.PC) d.PC->destroy_objects();
   if (pc_is_alive(&d)) {
     /* If the PC is dead, it's in the move heap and will get automatically *
      * deleted when the heap destructs.  In that case, we can't call       *
      * delete_pc(), because it will lead to a double delete.               */
     character_delete(d.PC);
   }
-
   delete_dungeon(&d);
   destroy_descriptions(&d);
 
