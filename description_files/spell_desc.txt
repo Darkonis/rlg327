@@ -23,7 +23,7 @@ By sacrificing one 666th of your soul to the great old ones
 You can summon a whirling ball of black energy to attack a foe
 .
 TYPE 0
-EFFECT 50+5d10
+EFFECT 200+5d10
 COST 8
 RANGE 4
 AOE 0
