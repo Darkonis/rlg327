@@ -10,20 +10,22 @@
 #include <cstdlib>
 
 #include "descriptions.h"
-#include "dungeon.h"
+//#include "dungeon.h"
 #include "npc.h"
 #include "dice.h"
 #include "character.h"
 #include "utils.h"
 #include "event.h"
-
+#include "spell.h"
 #define MONSTER_FILE_SEMANTIC          "RLG327 MONSTER DESCRIPTION"
 #define MONSTER_FILE_VERSION           1U
 #define NUM_MONSTER_DESCRIPTION_FIELDS 9
 #define OBJECT_FILE_SEMANTIC           "RLG327 OBJECT DESCRIPTION"
 #define OBJECT_FILE_VERSION            1U
 #define NUM_OBJECT_DESCRIPTION_FIELDS  14
-
+#define SPELL_FILE_SEMANTIC            "RLG327 SPELL DESCRIPTION"
+#define SPELL_FILE_VERSION             1U
+#define NUM_SPELL_DESCRIPTION_FIELDS   9
 static const struct {
   const char *name;
   const uint32_t value;
@@ -816,6 +818,238 @@ static uint32_t parse_object_description(std::ifstream &f,
 
   return 0;
 }
+static uint32_t parse_spell_name(std::ifstream &f,
+                                  std::string *lookahead,
+                                  std::string *name)
+{
+
+  return parse_name(f, lookahead, name);
+}
+static uint32_t parse_spell_desc(std::ifstream &f,
+                                  std::string *lookahead,
+                                  std::string *desc)
+{
+  return parse_desc(f, lookahead, desc);
+}
+static uint32_t parse_spell_type(std::ifstream &f,
+                                  std::string *lookahead,
+                                  uint32_t *type)
+{
+  return parse_integer(f, lookahead, type);
+}
+static uint32_t parse_spell_special(std::ifstream &f,
+                                  std::string *lookahead,
+                                  bool *special)
+{
+  return parse_object_art(f, lookahead, special );
+}
+static uint32_t parse_spell_effect(std::ifstream &f,
+                                  std::string *lookahead,
+                                  dice *effect)
+{
+  return parse_dice(f, lookahead, effect);
+}
+
+static uint32_t parse_spell_cost(std::ifstream &f,
+                                  std::string *lookahead,
+                                  uint32_t *cost)
+{
+  return parse_integer(f, lookahead, cost);
+}
+static uint32_t parse_spell_range(std::ifstream &f,
+                                  std::string *lookahead,
+                                  uint32_t *range)
+{
+  return parse_integer(f, lookahead, range);
+}
+static uint32_t parse_spell_aoe(std::ifstream &f,
+                                  std::string *lookahead,
+                                  uint32_t *aoe)
+{
+  return parse_integer(f, lookahead, aoe);
+}
+static uint32_t parse_spell_rarity(std::ifstream &f,
+                                  std::string *lookahead,
+                                  uint32_t *rarity)
+{
+  return parse_integer(f,lookahead,rarity);
+}
+static uint32_t parse_spell_description(std::ifstream &f,
+                                         std::string *lookahead,
+                                         std::vector<spell_description> *v)
+{
+  std::string s;
+  bool read_name, read_desc, read_type, read_special,
+    read_eff, read_cost, read_range, read_aoe,read_rarity;
+  std::string name, desc;
+  //  uint32_t color;
+  uint32_t type;
+  dice effect;
+  uint32_t cost,range,aoe;
+  bool special;
+   spell_description sp;
+  uint32_t rarity;
+  uint32_t count;
+  read_name=read_desc=read_type= read_special= read_eff= read_cost= read_range= read_aoe=read_rarity=false;
+   for (f >> *lookahead, count = 0;
+       count < NUM_SPELL_DESCRIPTION_FIELDS;
+       count++) {
+     /* This could definately be more concise. */
+    if        (*lookahead == "NAME")  {
+      if (read_name || parse_spell_name(f, lookahead, &name)) {
+        std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+                  << "Parse error in spell name.\n"
+                  << "Discarding spell." << std::endl;
+        return 1;
+      }
+       read_name=1;
+    }
+      if        (*lookahead == "DESC")  {
+      if (read_desc || parse_spell_desc(f, lookahead, &desc)) {
+        std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+                  << "Parse error in spell Description.\n"
+                  << "Discarding spell." << std::endl;
+        return 1;
+      }
+      read_desc=1;
+      }
+      if        (*lookahead == "TYPE")  {
+      if (read_type || parse_spell_type(f, lookahead, &type)) {
+        std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+                  << "Parse error in spell type.\n"
+                  << "Discarding spell." << std::endl;
+        return 1;
+      }
+       read_type=1;
+      }
+      if        (*lookahead == "EFFECT")  {
+      if (read_eff || parse_spell_effect(f, lookahead, &effect)) {
+        std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+                  << "Parse error in spell effect.\n"
+                  << "Discarding spell." << std::endl;
+        return 1;
+      }	
+      }	
+      if        (*lookahead == "COST")  {
+      if (read_cost || parse_spell_cost(f, lookahead, &cost)) {
+        std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+                  << "Parse error in spell Description.\n"
+                  << "Discarding spell." << std::endl;
+        return 1;
+      }
+       read_cost=1;
+      }	
+      if        (*lookahead == "RANGE")  {
+      if (read_range || parse_spell_range(f, lookahead, &range)) {
+        std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+                  << "Parse error in spell Description.\n"
+                  << "Discarding spell." << std::endl;
+        return 1;
+      }
+       read_range=1;
+      }	
+       if        (*lookahead == "AOE")  {
+      if (read_aoe || parse_spell_aoe(f, lookahead, &aoe)) {
+        std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+                  << "Parse error in spell aoe.\n"
+                  << "Discarding spell." << std::endl;
+        return 1;
+      }
+       read_aoe=1;
+       }
+       if        (*lookahead == "SPECIAL")  {
+	 if (read_special || parse_spell_special(f, lookahead, &special)) {
+	   std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+		    << "Parse error in spell aoe.\n"
+		    << "Discarding spell." << std::endl;
+		    return 1;
+		 }
+	 read_special=1;
+       }
+	 if        (*lookahead == "RRTY")  {
+      if (read_rarity || parse_spell_rarity(f, lookahead, &rarity)) {
+        std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+                  << "Parse error in spell RRTY.\n"
+                  << "Discarding spell." << std::endl;
+        return 1;
+      }
+       read_rarity=1;
+	 }
+
+   }
+   if (*lookahead != "END") {
+    return 1;
+  }
+  
+  eat_blankspace(f);
+  if (f.peek() != '\n' && f.peek() != EOF) {
+    return 1;
+  }
+  f >> *lookahead;
+
+  sp.set(name, desc,  type,special,effect,cost,range,aoe,rarity);
+  v->push_back(sp);
+
+  return 0;
+   
+}
+static void make_dice(dice *d,int b,uint32_t n,uint32_t t)
+{
+  d->set(b,n,t);
+}
+void add_spell_books(dungeon *d){
+  uint32_t i;
+  if(d->spell_descriptions.size()==0) return;
+  dice hit, dam, dodge, def, weight, speed, attr, val;
+  make_dice(&hit,0,0,0);
+  make_dice(&dam,0,0,0);
+  make_dice(&dodge,0,0,0);
+  make_dice(&def,0,0,0);
+  make_dice(&weight,10,0,0);
+  make_dice(&speed,0,0,0);
+  make_dice(&attr,0,0,0);
+  make_dice(&val,0,0,0);
+
+  for(i=0;i<d->spell_descriptions.size();i++)
+    {
+      object_description o;
+      spell_description s = d->spell_descriptions[i];
+      std::string desc= "this is a book of " + s.get_name()+" if you (U)se it you could learn a spell.";
+      uint32_t color=0;
+      int i=0;
+      std::string tar="";
+      switch (s.get_type())
+	{
+	case 0:
+	  tar = "RED";
+	  break;
+	case 1:
+	  tar = "YELLOW";
+	  break;
+	case 2:
+	  
+	    tar="GREEN";
+	    break;
+	case 3:
+	 
+	    tar="WHITE";
+	    break;
+	default:
+	  tar="BLACK";
+	  break;
+	}
+	  for (i = 0; colors_lookup[i].name; i++) {
+	    if (tar == colors_lookup[i].name) {
+	      color = colors_lookup[i].value;
+	      break;
+	    }
+	  }
+	  //dice hit, dam, dodge, def, weight, speed, attr, val;
+	  std::string name = "Book of " + s.get_name();
+	  o.set(name,desc,object_type_t::objtype_BOOK,color, hit,dam,dodge,def,weight,speed,attr,val, s.get_special(),s.get_rarity());
+	  d->object_descriptions.push_back(o);
+    }
+}
 
 static uint32_t parse_monster_descriptions(std::ifstream &f,
                                            dungeon *d,
@@ -876,7 +1110,35 @@ static uint32_t parse_object_descriptions(std::ifstream &f,
 
   return 0;
 }
+static uint32_t parse_spell_descriptions(std::ifstream &f,
+                                           dungeon *d,
+                                           std::vector<spell_description> *v)
+{
+  std::string s;
+  std::stringstream expected;
+  std::string lookahead;
 
+  expected << SPELL_FILE_SEMANTIC << " " << SPELL_FILE_VERSION;
+
+  eat_whitespace(f);
+
+  getline(f, s);
+
+  if (s != expected.str()) {
+    std::cerr << "Discovered at " << __FILE__ << ":" << __LINE__ << "\n"
+              << "Parse error in monster description file.\nExpected: \""
+              << expected.str() << "\"\nRead:     \"" << s << "\"\n\nAborting."
+              << std::endl;
+    return 1;
+  }
+
+  f >> lookahead;
+  do {
+    parse_spell_description(f, &lookahead, v);
+  } while (f.peek() != EOF);
+
+  return 0;
+}
 uint32_t parse_descriptions(dungeon *d)
 {
   std::string file;
@@ -912,7 +1174,20 @@ uint32_t parse_descriptions(dungeon *d)
   }
 
   f.close();
+  file = getenv("HOME");
+  if (file.length() == 0) {
+    file = ".";
+  }
+  file += std::string("/") + SAVE_DIR + "/" + SPELL_DESC_FILE;
 
+  f.open(file.c_str());
+
+  if (parse_spell_descriptions(f, d, &d->spell_descriptions)) {
+    retval = 1;
+  }
+
+  f.close();
+  add_spell_books(d);
   return retval;
 }
 
@@ -922,15 +1197,21 @@ uint32_t print_descriptions(dungeon *d)
   std::vector<monster_description>::iterator mi;
   std::vector<object_description> &o = d->object_descriptions;
   std::vector<object_description>::iterator oi;
-
+  
+  std::vector<spell_description> &s = d->spell_descriptions;
+   std::vector<spell_description>::iterator si;
   for (mi = m.begin(); mi != m.end(); mi++) {
-    std::cout << *mi << std::endl;
+      std::cout << *mi << std::endl;
   }
 
 
   for (oi = o.begin(); oi != o.end(); oi++) {
-    std::cout << *oi << std::endl;
+     std::cout << *oi << std::endl;
   }
+    for (si = s.begin(); si != s.end(); si++) {
+    std::cout << *si << std::endl;
+  }
+
 
   return 0;
 }
@@ -999,7 +1280,7 @@ uint32_t destroy_descriptions(dungeon *d)
 {
   d->monster_descriptions.clear();
   d->object_descriptions.clear();
-
+  d->spell_descriptions.clear();
   return 0;
 }
 
@@ -1063,6 +1344,34 @@ std::ostream &operator<<(std::ostream &o, object_description &od)
 {
   return od.print(o);
 }
+void spell_description::set(std::string name,std::string description,int type,bool special,dice effect,uint32_t cost,uint32_t range,uint32_t aoe,uint32_t rarity)
+{
+  this->name=name;
+  this->description=description;
+  this->type=type;
+  this->special=special;
+  this->effect=effect;
+  this->cost=cost;
+  this->range=range;
+  this->aoe=aoe;
+  this->rarity=rarity;
+}
+std::ostream &spell_description::print(std::ostream &o)
+{
+  //std::cout<<name;
+  //  uint32_t i;
+
+  o << name << std::endl;
+  o << description << std::endl;
+
+  return o << type << std::endl << special << std::endl << effect << std::endl
+	   << cost << std::endl << range << std::endl << aoe << std::endl<<rarity<<std::endl;
+
+}
+std::ostream &operator<<(std::ostream &o, spell_description &od)
+{
+  return od.print(o);
+}
 
 npc *monster_description::generate_monster(dungeon *d)
 {
@@ -1081,4 +1390,28 @@ npc *monster_description::generate_monster(dungeon *d)
   heap_insert(&d->events, new_event(d, event_character_turn, n, 0));
 
   return n;
+}
+void object_description::set(const std::string &name,  const std::string &description, const object_type_t type, const uint32_t color, dice &hit,dice &damage, dice &dodge,dice &defence, dice &weight, dice &speed, dice &attrubute,dice &value,const bool art, const uint32_t rrty)
+{
+this->name = name;
+  this->description = description;
+  this->type = type;
+  this->color = color;
+  this->hit = hit;
+  this->damage = damage;
+  this->dodge = dodge;
+  this->defence = defence;
+  this->weight = weight;
+  this->speed = speed;
+  this->attribute = attrubute;
+  this->value = value;
+  this->artifact = art;
+  this->rarity = rrty;
+
+}
+spell* spell_description::generate()
+{
+  spell* s;// =new spell();
+  s=new spell(name,description,type,special,effect,cost,range,aoe,rarity);
+    return s;
 }

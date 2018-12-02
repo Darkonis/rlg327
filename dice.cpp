@@ -18,7 +18,6 @@ int32_t dice::roll(void) const
 
   return total;
 }
-
 std::ostream &dice::print(std::ostream &o)
 {
   return o << base << '+' << number << 'd' << sides;

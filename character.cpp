@@ -5,7 +5,7 @@
 #include "npc.h"
 #include "pc.h"
 #include "dungeon.h"
-
+#include "spell.h"
 void character_delete(character *c)
 {
   delete c;

@@ -1,0 +1,113 @@
+RLG327 SPELL DESCRIPTION 1
+
+BEGIN SPELL
+NAME Fireball
+DESC 
+A large ball of fire is thrown at the target
+Goodness gracious!!!
+Deals damage to all foes in a radius
+.
+TYPE 0
+EFFECT 150+5d10
+COST 10
+RANGE 3
+AOE 3
+SPECIAL FALSE
+RRTY 80
+END
+
+BEGIN SPELL
+NAME Eldrich blast
+DESC
+By sacrificing one 666th of your soul to the great old ones 
+You can summon a whirling ball of black energy to attack a foe
+.
+TYPE 0
+EFFECT 50+5d10
+COST 8
+RANGE 4
+AOE 0
+SPECIAL TRUE
+RRTY 30
+END
+
+BEGIN SPELL
+NAME Sunburst 
+DESC 
+A burst of sunlight center on you explodes damaging all monsters
+in the local area.
+It is very enlightening
+.
+TYPE 0
+EFFECT 100+20d5
+COST 6
+RANGE 0
+AOE 5
+SPECIAL FALSE
+RRTY 40
+END 
+
+BEGIN SPELL
+NAME Lesser Healing
+DESC
+A holy light engulfs you and heals your wounds
+It's a very small light
+.
+TYPE 1
+EFFECT 10+4d5
+COST 5
+RANGE 0
+AOE 0
+SPECIAL FALSE
+RRTY 50
+END
+
+BEGIN SPELL
+NAME Greater Healing
+DESC 
+Open a rift to the heavens to heal you
+.
+TYPE 1
+EFFECT 100+4d10
+COST 12
+RANGE 0
+AOE 0
+SPECIAL FALSE
+RRTY 10
+END
+
+BEGIN SPELL
+NAME Vicious Mockery
+DESC 
+Assult the targets mind with a psycic chorus of laughter
+
+
+
+
+
+
+
+*Dislaimer Viscious Mockery may not be all that vicoius 
+.
+TYPE 0
+EFFECT 5+2d5
+COST 2
+RANGE 5
+AOE 0
+SPECIAL FALSE
+RRTY 90
+END
+
+BEGIN SPELL
+NAME Armagedon
+DESC 
+Allows you to summon a storm of meteors and hellfire
+.
+TYPE 0
+EFFECT 500+20d10
+COST 50
+RANGE 5
+AOE 4
+SPECIAL TRUE
+RRTY 10
+END

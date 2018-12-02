@@ -44,6 +44,8 @@ class pc : public character {
   uint32_t pick_up(dungeon *d);
   terrain_type known_terrain[DUNGEON_Y][DUNGEON_X];
   uint8_t visible[DUNGEON_Y][DUNGEON_X];
+  uint8_t max_spells=10;
+  uint8_t known_spells=0;
 };
 
 void pc_delete(pc *pc);

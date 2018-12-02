@@ -4,7 +4,8 @@
 #include "object.h"
 #include "dungeon.h"
 #include "utils.h"
-
+#include "descriptions.h"
+#include <ncurses.h>
 object::object(object_description &o, pair_t p, object *next) :
   name(o.get_name()),
   description(o.get_description()),
@@ -35,7 +36,7 @@ object::~object()
     delete next;
   }
 }
-
+//char object::get_symbol();
 void gen_object(dungeon *d)
 {
   object *o;
@@ -43,11 +44,22 @@ void gen_object(dungeon *d)
   pair_t p;
   std::vector<object_description> &v = d->object_descriptions;
   int i;
-
+  int c;
   do {
+    c=1;
     i = rand_range(0, v.size() - 1);
-  } while (!v[i].can_be_generated() || !v[i].pass_rarity_roll());
-  
+     
+    if((  v[i].get_type()==13)&&rand()%100>20)
+      {
+	c=0;
+      }
+    //vprintw(0,0,"t %d",t);                                                    
+    //getch();                                                                  
+  } while ((!v[i].can_be_generated() || !v[i].pass_rarity_roll())||!c);
+  //mvprintw(0,0,"done");
+  // getch();
+
+  // if(v[i].get_type()==object_type::objtype_BOOK&&rand()%100>30) continue;
   room = rand_range(0, d->num_rooms - 1);
   do {
     p[dim_y] = rand_range(d->rooms[room].position[dim_y],
@@ -58,12 +70,10 @@ void gen_object(dungeon *d)
                            d->rooms[room].size[dim_x] - 1));
   } while (mappair(p) > ter_stairs);
 
-  o = new object(v[i], p, d->objmap[p[dim_y]][p[dim_x]]);
-
+  o = new object(v[i], p, d->objmap[p[dim_y]][p[dim_x]]);		       
   d->objmap[p[dim_y]][p[dim_x]] = o;
   
 }
-
 void gen_objects(dungeon *d)
 {
   uint32_t i;

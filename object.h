@@ -53,7 +53,6 @@ class object {
   inline void set_next(object *n) { next = n; }
   const char *get_description() { return description.c_str(); }
 };
-
 void gen_objects(dungeon *d);
 char object_get_symbol(object *o);
 void destroy_objects(dungeon *d);

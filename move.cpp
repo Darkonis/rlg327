@@ -137,6 +137,10 @@ void do_combat(dungeon *d, character *atk, character *def)
 
 void move_character(dungeon *d, character *c, pair_t next)
 {
+  if(c->mana<100)
+    {
+      c->mana+=5;
+    }
   int can_see_atk, can_see_def;
   pair_t displacement;
   uint32_t found_cell;
@@ -152,7 +156,6 @@ void move_character(dungeon *d, character *c, pair_t next)
     {  1,  1 },
   };
   uint32_t s, i;
-
   if (charpair(next) &&
       ((next[dim_y] != c->position[dim_y]) ||
        (next[dim_x] != c->position[dim_x]))) {

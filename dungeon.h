@@ -6,6 +6,7 @@
 # include "dims.h"
 # include "character.h"
 # include "descriptions.h"
+//# include "spell.h"
 
 #define DUNGEON_X              80
 #define DUNGEON_Y              21
@@ -26,6 +27,7 @@
 #define DUNGEON_SAVE_VERSION   0U
 #define MONSTER_DESC_FILE      "monster_desc.txt"
 #define OBJECT_DESC_FILE       "object_desc.txt"
+#define SPELL_DESC_FILE        "spell_desc.txt"
 #define MAX_INVENTORY          10
 
 #define mappair(pair) (d->map[pair[dim_y]][pair[dim_x]])
@@ -98,6 +100,7 @@ class dungeon {
   uint32_t quit;
   std::vector<monster_description> monster_descriptions;
   std::vector<object_description> object_descriptions;
+  std::vector<spell_description> spell_descriptions;
 };
 
 void init_dungeon(dungeon *d);

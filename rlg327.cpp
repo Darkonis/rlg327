@@ -207,6 +207,8 @@ int main(int argc, char *argv[])
   srand(seed);
 
   parse_descriptions(&d);
+  //  print_descriptions(&d);
+  // return 0;
   io_init_terminal();
   init_dungeon(&d);
 

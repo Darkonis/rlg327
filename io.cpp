@@ -2,6 +2,7 @@
 #include <ncurses.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "io.h"
 #include "move.h"
@@ -11,6 +12,7 @@
 #include "dungeon.h"
 #include "object.h"
 #include "npc.h"
+#include "descriptions.h"
 
 /* Same ugly hack we did in path.c */
 static dungeon *thedungeon;
@@ -1474,7 +1476,330 @@ uint32_t io_expunge_in(dungeon *d)
 
   return 1;
 }
+uint32_t io_use_item(dungeon *d)
+{
+  uint32_t i, key,k;
+  char s[61];
 
+  for (i = 0; i < MAX_INVENTORY; i++) {
+    io_object_to_string(d->PC->in[i], s, 61);
+    mvprintw(i + 6, 10, " %c) %-55s ", '0' + i,
+             d->PC->in[i] ? d->PC->in[i]->get_name() : "");
+  }
+  mvprintw(16, 10, " %-58s ", "");
+  mvprintw(17, 10, " %-58s ", "Use which item (ESC to cancel");
+  refresh();
+
+  while (1) {
+    if ((key = getch()) == 27 /* ESC */) {
+      io_display(d);
+      return 1;
+    }
+
+    if (key == '/') {
+      io_display(d);
+      io_inspect_eq(d);
+      return 1;
+    }
+
+    if (key < '0' || key > '9') {
+      if (isprint(key)) {
+        snprintf(s, 61, "Invalid input: '%c'.  Enter 0-9 or ESC to cancel.",
+                 key);
+        mvprintw(18, 10, " %-58s ", s);
+      } else {
+        mvprintw(18, 10, " %-58s ",
+                 "Invalid input.  Enter 0-9 or ESC to cancel.");
+      }
+      refresh();
+      continue;
+    }
+
+    if (!d->PC->in[key - '0']) {
+      mvprintw(18, 10, " %-58s ", "Empty inventory slot.  Try again.");
+      refresh();
+      continue;
+    }
+    int done=0;
+    int bad=0;
+    std::string name;
+    switch(d->PC->in[key - '0']->get_type())
+      {
+      case object_type_t::objtype_BOOK:
+	spell* s;
+	 name=d->PC->in[key - '0']->get_name();
+	  s=find_spell(d,name.substr(8));
+	for(k=0;k<d->PC->spells.size();k++)
+	  if(d->PC->spells[k].get_name()==s->get_name())
+	    {
+	      {
+		bad=1;
+	      }
+	    }
+	if(s&&!bad&&d->PC->known_spells<d->PC->max_spells)
+	  {
+	    d->PC->spells.push_back(*s);
+	    d->PC->destroy_in(key-'0');
+	     io_print_message_queue(0,0);
+	     io_queue_message("You consume the book");
+	     io_print_message_queue(0,0);
+	     d->PC->known_spells++;
+	  }
+	else if (bad==1)
+	  {
+	    mvprintw(18,10,"You already know this spell"); 
+	   continue;
+	  }
+	else if(!s)
+	  {
+	    io_queue_message("error");
+
+	  }
+	else
+	  {
+	      mvprintw(18,10,"You know to many spells forget one to learn more");
+	      done=1;
+	  }
+	io_print_message_queue(0,0);
+	done=1;
+	break;
+      default :
+	mvprintw(18,10,"you cannot use that item try again");
+	  break;
+
+      }
+    if(done)
+      {
+	break;
+      }
+  }
+
+  return 1;
+}
+void display_spells(dungeon *d)
+{
+  int i;
+   mvprintw(2,10,"Slot: Name: Mana cost: Range: Aoe: Effect:" );
+   for(i=0;i<d->PC->known_spells;i++)
+    {
+      spell s= d->PC->spells[i];
+      dice d = s.get_effect();
+      
+      //std::string t = d.get_base()+"+"+d.get_number()+"d"+d.get_sides();
+      mvprintw(3+i,10,"%d %s: %d %d %d %d+%dd%d",i,s.get_name().c_str(),s.get_cost(),s.get_range(),s.get_aoe(),d.get_base(),d.get_number(),d.get_sides());
+    }
+   refresh();
+   //    getch();
+}
+void io_display_spells(dungeon *d)
+{
+ mvprintw(1,10,"press any key to continue");
+ display_spells(d);
+ getch();
+}
+spell* select_spell(dungeon *d)
+{
+  int done =0;
+  int ch=0;
+ mvprintw(1,10,"select a spell or press escape");
+do
+  {
+    display_spells(d);
+    if(ch-48>=0&&ch-48<d->PC->known_spells)
+      {
+	return &(d->PC->spells[ch-48]);
+      }
+  } while((ch=getch())!=27&&!done);
+ return NULL;
+}
+bool is_in_range(dungeon *d, pair_t cur,pair_t start,spell s)
+{
+  int x_sqr = pow(abs(cur[dim_x]-start[dim_x]),2); 
+  int y_sqr = pow(abs(cur[dim_y]-start[dim_y]),2);
+  int sum = x_sqr+y_sqr;
+  float res = sqrt((float)sum);
+  if(res-s.get_range()<.1) return true;
+  return false;
+
+
+}
+void tar_spell(dungeon *d, spell s)
+{
+  // uint32_t n;
+  pair_t dest, tmp, start;
+  int c;
+  fd_set readfs;
+  struct timeval tv;
+  //char s[80];
+  // const char *p;
+
+  io_display(d);
+
+  mvprintw(0, 0, "Target a location.  'S' or '.' to select; 'ESC' to cancel.");
+  mvprintw(1,0,"Range is %d",s.get_range());
+  dest[dim_y] = d->PC->position[dim_y];
+  dest[dim_x] = d->PC->position[dim_x];
+  start[dim_y]=dest[dim_y];
+  start[dim_x]=dest[dim_x];
+  mvaddch(dest[dim_y] + 1, dest[dim_x], '*');
+  refresh();
+
+  do {
+    do{
+      FD_ZERO(&readfs);
+      FD_SET(STDIN_FILENO, &readfs);
+      tv.tv_sec = 0;
+      tv.tv_usec = 125000; /* An eigth of a second */
+      io_redisplay_visible_monsters(d, dest);
+    } while (!select(STDIN_FILENO + 1, &readfs, NULL, NULL, &tv));
+    /* Can simply draw the terrain when we move the cursor away, *          
+     * because if it is a character or object, the refresh       *   
+     * function will fix it for us.                              */
+    switch (mappair(dest)) {
+    case ter_wall:
+    case ter_wall_immutable:
+    case ter_unknown:
+      mvaddch(dest[dim_y] + 1, dest[dim_x], ' ');
+      break;
+    case ter_floor:
+    case ter_floor_room:
+      mvaddch(dest[dim_y] + 1, dest[dim_x], '.');
+      break;
+    case ter_floor_hall:
+      mvaddch(dest[dim_y] + 1, dest[dim_x], '#');
+      break;
+    case ter_debug:
+      mvaddch(dest[dim_y] + 1, dest[dim_x], '*');
+      break;
+    case ter_stairs_up:
+      mvaddch(dest[dim_y] + 1, dest[dim_x], '<');
+      break;
+    case ter_stairs_down:
+      mvaddch(dest[dim_y] + 1, dest[dim_x], '>');
+      break;
+    default:
+   /* Use zero as an error symbol, since it stands out somewhat, and it's *                                                                                                                                
+  * not otherwise used.                                                 */
+      mvaddch(dest[dim_y] + 1, dest[dim_x], '0');
+    }
+    tmp[dim_y] = dest[dim_y];
+    tmp[dim_x] = dest[dim_x];
+    switch ((c = getch())) {
+    case '7':
+    case 'y':
+    case KEY_HOME:
+      tmp[dim_y]--;
+      tmp[dim_x]--;
+      if (dest[dim_y] != 1 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_y]--;
+      }
+      if (dest[dim_x] != 1 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_x]--;
+      }
+      break;
+    case '8':
+    case 'k':
+    case KEY_UP:
+      tmp[dim_y]--;
+      if (dest[dim_y] != 1 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_y]--;
+      }
+      break;
+    case '9':
+    case 'u':
+    case KEY_PPAGE:
+      tmp[dim_y]--;
+      tmp[dim_x]++;
+      if (dest[dim_y] != 1 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_y]--;
+      }
+      if (dest[dim_x] != DUNGEON_X - 2 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_x]++;
+      }
+      break;
+    case '6':
+    case 'l':
+    case KEY_RIGHT:
+      tmp[dim_x]++;
+      if (dest[dim_x] != DUNGEON_X - 2 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_x]++;
+      }
+      break;
+    case '3':
+    case 'n':
+    case KEY_NPAGE:
+      tmp[dim_y]++;
+      tmp[dim_x]++;
+      if (dest[dim_y] != DUNGEON_Y - 2 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_y]++;
+      }
+      if (dest[dim_x] != DUNGEON_X - 2 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_x]++;
+      }
+      break;
+    case '2':
+    case 'j':
+    case KEY_DOWN:
+      tmp[dim_y]++;
+      if (dest[dim_y] != DUNGEON_Y - 2 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_y]++;
+      }
+      break;
+    case '1':
+    case 'b':
+    case KEY_END:
+      tmp[dim_y]++;
+      tmp[dim_x]--;
+      if (dest[dim_y] != DUNGEON_Y - 2 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_y]++;
+      }
+      if (dest[dim_x] != 1 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_x]--;
+      }
+      break;
+    case '4':
+    case 'h':
+    case KEY_LEFT:
+      tmp[dim_x]--;
+      if (dest[dim_x] != 1 &&
+          is_in_range(d,tmp,start,s)) {
+        dest[dim_x]--;
+      }
+      break;
+    }
+  } while(c!=27&&c!='S'&&c!='.');
+       
+      
+  if(c==27)
+    {
+      io_display(d);
+      return;
+    }
+  s.cast(d,dest,d->PC);
+  io_print_message_queue(0,0);
+  //dest[dim_x] = tarX;
+  //dest[dim_y]= tarY;
+  // return dest;
+}
+void io_cast(dungeon *d)
+{
+  spell *s =select_spell(d);
+  if(s)
+    {
+      tar_spell(d,*s);
+    }
+}
 void io_handle_input(dungeon *d)
 {
   uint32_t fail_code;
@@ -1572,6 +1897,11 @@ void io_handle_input(dungeon *d)
       io_display_hardness(d);
       fail_code = 1;
       break;
+      case 'S':
+      /* New command.  Display the spells list.                          */
+      io_display_spells(d);
+      fail_code = 1;
+      break;
     case 's':
       /* New command.  Return to normal display after displaying some   *
        * special screen.                                                */
@@ -1600,6 +1930,9 @@ void io_handle_input(dungeon *d)
     case 'd':
       fail_code = io_drop_in(d);
       break;
+    case 'C':
+	io_cast(d);
+	break;
     case 'x':
       fail_code = io_expunge_in(d);
       break;
@@ -1618,6 +1951,10 @@ void io_handle_input(dungeon *d)
     case 'I':
       io_inspect_in(d);
       fail_code = 1;
+      break;
+    case 'U':
+      io_use_item(d);
+      fail_code=1;
       break;
     case 'L':
       io_inspect_monster(d);

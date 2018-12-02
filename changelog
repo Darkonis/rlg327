@@ -66,3 +66,9 @@
 	11/15/18
 	bug fixes
 	Memory leak fixes
+
+	version 1.10	
+	11/24/18
+	added spell parsing and storage
+	12/2/18 
+	added spells and spell combat
