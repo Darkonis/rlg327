@@ -1,0 +1,27 @@
+This is the dungeon game created by Darron Anderson
+For the final assignement I decided to add in spells and spell parsing from files
+spell have to types destruction shown as a 0 and restoration shown as a 1
+additionally you must first learn a spell from a book before you can use it
+to learn a spell press U and select the spell
+you can then cast a spell with C
+and display info about the spell with S
+restoration spell books are yellow 
+destruction are red
+lastly added mana
+mana is a players ability to cast spells if the player dosn't have as much mana as the cost of a spell they cant cast it.
+mana regenerates at a rate of per turn up to 100
+If your having trouble finding spells open object.cpp and change the value in line 52 to a higher number then recompile.
+I intentionally set up a special limit ability of spell books to generate as there are alot of spell books and it can drown out other objects easily changing this value will make testing spells simpiler  
+
+
+Important!
+Don't forget to move spell_desc.txt from description_files to .rlg327 other wise they won't load
+
+for more information on the evolution of this code please visit https://github.com/Darkonis/dungeon for the complete commit log
+
+NEW commands for version 1.10
+use key U
+
+display spells S
+
+Cast spell C

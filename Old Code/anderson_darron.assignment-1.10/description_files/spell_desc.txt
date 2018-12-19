@@ -34,7 +34,7 @@ END
 BEGIN SPELL
 NAME Sunburst 
 DESC 
-A burst of sunlight centered on you explodes damaging all monsters
+A burst of sunlight center on you explodes damaging all monsters
 in the local area.
 It is very enlightening
 .
@@ -102,8 +102,6 @@ BEGIN SPELL
 NAME Armagedon
 DESC 
 Allows you to summon a storm of meteors and hellfire
-
-It's the end of the world as we know it!
 .
 TYPE 0
 EFFECT 500+20d10
